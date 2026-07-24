@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title><%= titulo %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <h1>Bem-vindo ao sistema!</h1>
+  <p>Mensagem vinda do back-end: <strong><%= mensagem %></strong></p>
+
+  <h2>Lista de Itens:</h2>
+  <ul>
+    <% itens.forEach(item => { %>
+      <li><%= item %></li>
+    <% }) %>
+  </ul>
+</body>
+</html>
