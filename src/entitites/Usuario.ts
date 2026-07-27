@@ -9,9 +9,9 @@ export class Usuario {
 // Atributos
 
     private _id: string;
-    private _nome: string;
-    private _email: string;
-    private _senhaHash: string;
+    private _nome!: string;
+    private _email!: string;
+    private _senhaHash!: string;
 
 // Constructor
 
@@ -22,7 +22,7 @@ export class Usuario {
         this.senhaHash = senhaHash;
     }
 
-// Getters e Setters VALIDADOS
+// Getters e Setters VALIDADOS, junto de um método VALIDAR
 
     public get id(): string {
         return this._id;
@@ -71,6 +71,17 @@ export class Usuario {
             nome: this._nome,
             email: this._email,
         };
+    }
+
+    public validar(): boolean {
+        if (!this._nome || this._nome.trim().length < 3)
+        return false;
+        if (!this._email || !this._email.includes("@") || this._email.trim().length < 3) 
+        return false;
+        if (!this._senhaHash || this._senhaHash.trim().length < 3)
+        return false;
+        
+        return true;
     }
 
 // Criar novo usuário
