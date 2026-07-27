@@ -76,9 +76,39 @@ public/
 
  Tabela de rotas 
 metedo    rota           Descrição       auth   status 
-get      /api/produtos   Listar todos    sim     200 
+get      /api/produtos   Listar todos     sim     200 
 post    /api/produtos     criar          sim     201/400 
 put    /api/produtos/:id  atualizar      sim     200/404 
 delete /api/produtos/:id  remover        admin   200/404 
 post   /auth/registro     registra       não     201/400 
-post   /auth/login        login          não     200/401 
+post   /auth/login        login          não     200/401  
+
+Diagrama de caso e uso 
+
+Admin 
+
+#Log in 
+
+#Add category  
+
+#Add item
+
+#Manage item 
+
+#Manage order 
+
+#Log out 
+
+User 
+
+#Registrantion 
+
+#View item 
+
+#Make order 
+
+#Make payment 
+
+#Update Profille 
+
+#Log out
