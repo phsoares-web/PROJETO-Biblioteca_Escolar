@@ -44,7 +44,7 @@ export class Usuario {
     }
 
     public set email(valor: string) {
-        if (!valor || !valor.includes("@") || valor.trim().length < 5) {
+        if (!valor || !valor.includes("@") || valor.trim().length < 5 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor.trim())) {
             throw new Error("E-mail Inválido")
         }
         this._email = valor.trim().toLowerCase();
@@ -76,15 +76,13 @@ export class Usuario {
     public validar(): boolean {
         if (!this._nome || this._nome.trim().length < 3)
         return false;
-        if (!this._email || !this._email.includes("@") || this._email.trim().length < 3) 
+        if (!this._email || !this._email.includes("@") || this._email.trim().length < 5) 
         return false;
-        if (!this._senhaHash || this._senhaHash.trim().length < 3)
+        if (!this._senhaHash)
         return false;
         
         return true;
     }
-
-// Criar novo usuário
 
     public static fromJSON(dados: any): Usuario {
         if(!dados.id || !dados.email || !dados.senhaHash || !dados.nome) {
@@ -96,6 +94,22 @@ export class Usuario {
             dados.nome,
             dados.email,
             dados.senhaHash,
+        );
+    }
+
+    public static async criar (id: string, nome: string, email: string, senhaPlana: string): Promise<Usuario> {
+        
+        if(!senhaPlana) {
+            throw new Error("Senha inválida.")
+        }
+
+        const SALT_ROUNDS = 10;
+        const senhaHash = await bcrypt.hash(senhaPlana, SALT_ROUNDS);
+        return new Usuario (
+            id,
+            nome, 
+            email, 
+            senhaHash,
         );
     }
 }
