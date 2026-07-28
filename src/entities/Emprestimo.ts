@@ -1,7 +1,3 @@
-// Imports
-
-import bcrypt from "bcrypt";
-
 // Entidade Empréstimo
 
 export class Emprestimo {
@@ -16,14 +12,15 @@ export class Emprestimo {
 
   constructor(
     id: string,
-    alundoId: string,
+    alunoId: string,
     livroId: string,
     dataEmprestimo: Date,
     dataDevolucaoPrevista: Date,
     dataDevolucaoReal: Date | null
   ) {
     this._id = id;
-    this._alunoId = alundoId;
+    this._alunoId = alunoId;
+    this._livroId = livroId;
     this._dataEmprestimo = dataEmprestimo;
     this._dataEmprestimo = dataEmprestimo;
     this._dataDevolucaoPrevista = dataDevolucaoPrevista;
@@ -103,6 +100,9 @@ export class Emprestimo {
         if (!(this._dataEmprestimo instanceof Date)) {
             return false;
         }
+        if (this._dataDevolucaoPrevista < this._dataEmprestimo) {
+            return false;
+        }
         if (!(this._dataDevolucaoPrevista instanceof Date)) {
             return false;
         }
@@ -110,7 +110,7 @@ export class Emprestimo {
         return true;
     }
 
-    public finalizarDevolucao(dataDevolucaoReal: Date): void {
+    public finalizarDevolucao(): void {
         if (this._dataDevolucaoReal !== null) {
             throw new Error("Este empréstimo já foi finalizado");
         }
@@ -121,19 +121,33 @@ export class Emprestimo {
         if (this._dataDevolucaoReal) {
             return this._dataDevolucaoReal > this._dataDevolucaoPrevista;
         }
-        return new Date > this.dataDevolucaoPrevista;
+        return new Date() > this.dataDevolucaoPrevista;
     }
 
     public toJSON() {
-        id: this._id,
-        alunoId: this._alunoId,
-        livroId: this._livroId,
-        dataEmprestimo: this._dataEmprestimo.toISOString(),
-        dataDevolucaoPrevista: this._dataDevolucaoPrevista.toISOString(),
-        dataDevolucaoReal: this._dataDevolucaoReal ? this._dataDevolucaoReal.toISOString() : null,
-        atrasado: this.estaAtrasado(),
-
+        return {
+            id: this._id,
+            alunoId: this._alunoId,
+            livroId: this._livroId,
+            dataEmprestimo: this._dataEmprestimo.toISOString(),
+            dataDevolucaoPrevista: this._dataDevolucaoPrevista.toISOString(),
+            dataDevolucaoReal: this._dataDevolucaoReal ? this._dataDevolucaoReal.toISOString() : null,
+            atrasado: this.estaAtrasado(),
+        }
     }
 
-}
+    public static fromJSON(dados: any): Emprestimo {
+        if (!dados || !dados.id || !dados.alunoId || !dados.livroId) {
+            throw new Error("Dados inválidos!");
+        }
 
+        return new Emprestimo(
+            dados.id,
+            dados.alunoId,
+            dados.livroId,
+            new Date(dados.dataEmprestimo),
+            new Date(dados.dataDevolucaoPrevista),
+            dados.dataDevolucaoReal ? new Date(dados.dataDevolucaoReal) : null
+        );
+    }
+}
