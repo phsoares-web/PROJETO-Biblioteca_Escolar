@@ -50,7 +50,7 @@ export class Aluno {
         if (!this._nome || this._nome.trim().length < 3) {
             return false;
         }
-        if (!this._matricula || this._matricula.trim().length < 3) {
+        if (!this._matricula || !/^\d{4,}$/.test(this._matricula)) {
             return false;
         }
         return true;
