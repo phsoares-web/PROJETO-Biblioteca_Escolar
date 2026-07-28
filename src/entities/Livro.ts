@@ -1,7 +1,3 @@
-// Imports
-
-import bcrypt from "bcrypt";
-
 // Entidade Livro
 
 export class Livro {
@@ -12,19 +8,19 @@ export class Livro {
     private _titulo!: string;
     private _autor!: string;
     private _disponivel!: boolean;
-
+    
 // Constructor
 
     constructor(id: string, titulo: string, autor: string, disponivel: boolean) {
         
         this._id = id;
-        this._titulo = titulo;
-        this._autor = autor;
+        this.titulo = titulo;
+        this.autor = autor;
         this._disponivel = disponivel;
 
     }
 
-// Getters e Setters VALIDADOS + método VALIDAR
+// Getters e Setters VALIDADOS
 
     public get id(): string {
         return this._id;
@@ -60,6 +56,47 @@ export class Livro {
         this._disponivel = valor;
     } 
 
-//
+// Métodos
 
+    public validar(): boolean {
+        if (!this._id) {
+            return false;
+        }
+        if (!this.titulo) {
+            return false;
+        }
+        if (!this._autor) {
+            return false;
+        }
+        if (this._disponivel === undefined || this._disponivel === null) {
+            return false;
+        }
+    
+        return true;
+    }
+
+    public toJSON() {
+        return {
+            id: this._id,
+            titulo: this._titulo,
+            autor: this._autor,
+            disponivel: this._disponivel
+        };
+    }
+
+    public static fromJSON(dados: any): Livro {
+        if (!dados || !dados.id || !dados.titulo || !dados.autor) {
+            throw new Error("Dados inválidos para criar um livro");
+        }
+
+        const statusDisponivel = dados.disponivel !== undefined ? Boolean(dados.disponivel) : true;
+
+
+        return new Livro(
+            dados.id,
+            dados.titulo,
+            dados.autor,
+            statusDisponivel
+        );
+    }
 }
