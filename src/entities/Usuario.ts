@@ -9,9 +9,9 @@ export class Usuario {
 // Atributos
 
     private _id: string;
-    private _nome: string;
-    private _email: string;
-    private _senhaHash: string;
+    private _nome!: string;
+    private _email!: string;
+    private _senhaHash!: string;
 
 // Constructor
 
@@ -22,7 +22,7 @@ export class Usuario {
         this.senhaHash = senhaHash;
     }
 
-// Getters e Setters VALIDADOS
+// Getters e Setters VALIDADOS + método VALIDAR
 
     public get id(): string {
         return this._id;
@@ -44,7 +44,7 @@ export class Usuario {
     }
 
     public set email(valor: string) {
-        if (!valor || !valor.includes("@") || valor.trim().length < 5) {
+        if (!valor || !valor.includes("@") || valor.trim().length < 5 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor.trim())) {
             throw new Error("E-mail Inválido")
         }
         this._email = valor.trim().toLowerCase();
@@ -73,7 +73,16 @@ export class Usuario {
         };
     }
 
-// Criar novo usuário
+    public validar(): boolean {
+        if (!this._nome || this._nome.trim().length < 3)
+        return false;
+        if (!this._email || !this._email.includes("@") || this._email.trim().length < 5) 
+        return false;
+        if (!this._senhaHash)
+        return false;
+        
+        return true;
+    }
 
     public static fromJSON(dados: any): Usuario {
         if(!dados.id || !dados.email || !dados.senhaHash || !dados.nome) {
@@ -85,6 +94,22 @@ export class Usuario {
             dados.nome,
             dados.email,
             dados.senhaHash,
+        );
+    }
+
+    public static async criar (id: string, nome: string, email: string, senhaPlana: string): Promise<Usuario> {
+        
+        if(!senhaPlana) {
+            throw new Error("Senha inválida.")
+        }
+
+        const SALT_ROUNDS = 10;
+        const senhaHash = await bcrypt.hash(senhaPlana, SALT_ROUNDS);
+        return new Usuario (
+            id,
+            nome, 
+            email, 
+            senhaHash,
         );
     }
 }
