@@ -19,12 +19,11 @@ export class Emprestimo {
     dataDevolucaoReal: Date | null
   ) {
     this._id = id;
-    this._alunoId = alunoId;
-    this._livroId = livroId;
-    this._dataEmprestimo = dataEmprestimo;
-    this._dataEmprestimo = dataEmprestimo;
-    this._dataDevolucaoPrevista = dataDevolucaoPrevista;
-    this._dataDevolucaoReal = dataDevolucaoReal;
+    this.alunoId = alunoId;
+    this.livroId = livroId;
+    this.dataEmprestimo = dataEmprestimo;
+    this.dataDevolucaoPrevista = dataDevolucaoPrevista;
+    this.dataDevolucaoReal = dataDevolucaoReal;
   }
 
 // Getters e Setters VALIDADOS
@@ -100,13 +99,12 @@ export class Emprestimo {
         if (!(this._dataEmprestimo instanceof Date)) {
             return false;
         }
-        if (this._dataDevolucaoPrevista < this._dataEmprestimo) {
-            return false;
-        }
         if (!(this._dataDevolucaoPrevista instanceof Date)) {
             return false;
         }
-        
+        if (this._dataDevolucaoPrevista <= this._dataEmprestimo) {
+            return false;
+        }
         return true;
     }
 
