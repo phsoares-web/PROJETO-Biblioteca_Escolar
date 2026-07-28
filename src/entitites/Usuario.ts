@@ -22,7 +22,7 @@ export class Usuario {
         this.senhaHash = senhaHash;
     }
 
-// Getters e Setters VALIDADOS, junto de um método VALIDAR
+// Getters e Setters VALIDADOS + método VALIDAR
 
     public get id(): string {
         return this._id;
