@@ -2,18 +2,57 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= titulo %></title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <h1>Bem-vindo ao sistema!</h1>
-  <p>Mensagem vinda do back-end: <strong><%= mensagem %></strong></p>
 
-  <h2>Lista de Itens:</h2>
-  <ul>
-    <% itens.forEach(item => { %>
-      <li><%= item %></li>
-    <% }) %>
-  </ul>
+  <header class="header">
+    <div class="header-top">
+      <!-- Botão no Canto Superior Esquerdo -->
+      <a href="/login" class="btn-header-login">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2 5a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v1h4v-1z"/>
+        </svg>
+        Entrar
+      </a>
+    </div>
+
+    <div class="header-container">
+      <div class="logo">
+        <img src="/logo-winrar.png" alt="Logo WinRAR" class="logo-img">
+        <h1><%= titulo %></h1>
+      </div>
+      <p class="subtitle">Acervo e Catálogo Digital</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="catalog-section">
+      <h2>Livros Disponíveis</h2>
+
+      <div class="books-grid">
+        <% if (itens && itens.length > 0) { %>
+          <% itens.forEach(function(item) { %>
+            <div class="book-card">
+              <div class="book-cover">📖</div>
+              <div class="book-info">
+                <h3><%= item %></h3>
+                <span class="status available">Disponível</span>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <p>Nenhum livro encontrado no momento.</p>
+        <% } %>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; Bernardo, Paulo, Alice, João Victor e Emanuel</p>
+  </footer>
+
 </body>
 </html>
