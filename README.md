@@ -1,5 +1,5 @@
 # PROJETO-Biblioteca_Escolar
-Projeto de informático focado em cria uma biblioteca escolar com a função de ajudar os alunos na leitura e no empréstino de livros Além de garantir o acesso gratuito a literatua
+Projeto de informático focado em criar uma biblioteca escolar com a função de ajudar os alunos na leitura e no empréstimo de livros Além de garantir o acesso gratuito a literatura
 ##Componentes
 
 #João Victor = Back - end(Rotas, Controllers, Models, Auth, Validações)
