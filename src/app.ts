@@ -3,6 +3,7 @@ import path from 'path';
 import livrosRoutes from './routes/livros';
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Configuração de Middlewares
 app.use(express.json());
@@ -20,7 +21,7 @@ export interface Livro {
   id: number;
   titulo: string;
   autor?: string;
-  capa?: string; // <--- Guarda o caminho da imagem enviada
+  capa?: string; // Guarda o caminho da imagem enviada
   status: 'disponivel' | 'emprestado';
 }
 
@@ -35,7 +36,7 @@ export let livros: Livro[] = [
 // --- ROTAS DO MÓDULO DE LIVROS ---
 app.use('/livros', livrosRoutes);
 
-// --- ROTAS DAS PÁGINAS ---
+// --- ROTAS DAS PÁGINAS (GET) ---
 app.get('/', (req: Request, res: Response) => {
   res.render('pagina-inicial', {
     titulo: 'Biblioteca Aluísio Azevedo',
@@ -45,6 +46,19 @@ app.get('/', (req: Request, res: Response) => {
 
 app.get('/login', (req: Request, res: Response) => {
   res.render('login', { titulo: 'Biblioteca Aluísio Azevedo' });
+});
+
+// --- ROTAS DE AUTENTICAÇÃO (POST) ---
+app.post('/login', (req: Request, res: Response) => {
+  const { email, senha } = req.body;
+  console.log('Login efetuado:', { email });
+  res.redirect('/');
+});
+
+app.post('/register', (req: Request, res: Response) => {
+  const { nome, email, senha } = req.body;
+  console.log('Novo usuário cadastrado:', { nome, email });
+  res.redirect('/');
 });
 
 // --- ROTAS DA API ---
@@ -71,6 +85,14 @@ app.patch('/api/livros/:id/toggle-status', (req: Request, res: Response) => {
     mensagem: 'Status alterado com sucesso',
     novoStatus: livro.status
   });
+});
+
+// --- INICIALIZAÇÃO DO SERVIDOR ---
+app.listen(PORT, () => {
+  console.log(`\n=================================`);
+  console.log(`🚀 Servidor rodando com sucesso!`);
+  console.log(`👉 Acesse em: http://localhost:${PORT}`);
+  console.log(`=================================\n`);
 });
 
 export default app;

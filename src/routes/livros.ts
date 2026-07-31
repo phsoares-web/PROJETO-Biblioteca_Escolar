@@ -74,4 +74,19 @@ router.post('/editar/:id', upload.single('capa'), (req: Request, res: Response) 
   res.redirect('/');
 });
 
+// --- ROTA DE EXCLUSÃO DO LIVRO ---
+router.post('/deletar/:id', (req: Request, res: Response) => {
+  const paramId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  const id = parseInt(paramId, 10);
+
+  const livroIndex = livros.findIndex(l => l.id === id);
+
+  if (livroIndex !== -1) {
+    livros.splice(livroIndex, 1);
+    return res.status(200).json({ mensagem: 'Livro excluído com sucesso' });
+  }
+
+  return res.status(404).json({ mensagem: 'Livro não encontrado' });
+});
+
 export default router;
