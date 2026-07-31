@@ -28,16 +28,31 @@
   </header>
 
   <main class="container">
+    
+    <!-- BARRA DE BUSCA -->
+    <section class="search-section">
+      <form id="search-form" class="search-container">
+        <input 
+          type="text" 
+          id="search-input" 
+          class="search-input" 
+          placeholder="Buscar livro por título..."
+        >
+        <button type="submit" class="btn-search">Buscar</button>
+      </form>
+    </section>
+
+    <!-- LISTAGEM DE LIVROS -->
     <section class="catalog-section">
-      <h2>Livros Disponíveis</h2>
-      <div class="books-grid">
+      <h2>Acervo de Livros</h2>
+      <div class="books-grid" id="books-grid">
         
         <% itens.forEach(livro => { %>
           <div class="book-card" data-id="<%= livro.id %>">
             <div class="book-cover">📖</div>
             <div class="book-info">
               <h3><%= livro.titulo %></h3>
-              <span class="status <%= livro.status === 'disponivel' ? 'available' : '' %>">
+              <span class="status <%= livro.status === 'disponivel' ? 'available' : 'borrowed' %>">
                 <%= livro.status %>
               </span>
             </div>
@@ -51,6 +66,56 @@
   <footer class="footer">
     <p>&copy; Bernardo, Paulo, Alice, João Victor e Emanuel</p>
   </footer>
+
+  <!-- SCRIPT DE BUSCA DINÂMICA -->
+  <script>
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+    const booksGrid = document.getElementById('books-grid');
+
+    async function buscarLivros(termo = '') {
+      try {
+        const response = await fetch(`/api/livros?busca=${encodeURIComponent(termo)}`);
+        const livros = await response.json();
+
+        booksGrid.innerHTML = '';
+
+        if (livros.length === 0) {
+          booksGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #8D6E63;">Nenhum livro encontrado.</p>';
+          return;
+        }
+
+        livros.forEach(livro => {
+          const isAvailable = livro.status === 'disponivel';
+          const cardHtml = `
+            <div class="book-card" data-id="${livro.id}">
+              <div class="book-cover">📖</div>
+              <div class="book-info">
+                <h3>${livro.titulo}</h3>
+                <span class="status ${isAvailable ? 'available' : 'borrowed'}">
+                  ${livro.status}
+                </span>
+              </div>
+            </div>
+          `;
+          booksGrid.innerHTML += cardHtml;
+        });
+      } catch (error) {
+        console.error('Erro ao buscar livros:', error);
+      }
+    }
+
+    // Busca ao submeter o formulário
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      buscarLivros(searchInput.value);
+    });
+
+    // Busca instantânea enquanto digita
+    searchInput.addEventListener('input', () => {
+      buscarLivros(searchInput.value);
+    });
+  </script>
 
 </body>
 </html>
