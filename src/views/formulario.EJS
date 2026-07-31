@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= livro && livro.id ? 'Editar Livro' : 'Cadastrar Livro' %> - Biblioteca Aluísio Azevedo</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    /* Estilos específicos para harmonizar a caixa de formulário com o tema */
+    .form-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .form-card {
+      background: #ffffff;
+      padding: 30px 35px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .form-card h2 {
+      color: #3d2410;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      text-align: center;
+      border-bottom: 2px solid #f0e6d2;
+      padding-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #3d2410;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #dcd1ba;
+      border-radius: 6px;
+      background-color: #fcfaf5;
+      font-size: 0.95rem;
+      color: #333;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #3d2410;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background-color: #3d2410;
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-submit:hover {
+      background-color: #2b190a;
+    }
+
+    .btn-back {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      color: #666;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .btn-back:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cabeçalho idêntico ao do seu site -->
+  <header>
+    <div class="header-container">
+      <h1>📚 Biblioteca Aluísio Azevedo</h1>
+      <p>CADASTRO DE ACERVO</p>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="form-wrapper">
+    <div class="form-card">
+      <h2><%= livro && livro.id ? 'Editar Livro' : 'Cadastrar Novo Livro' %></h2>
+
+      <form action="<%= livro && livro.id ? '/livros/editar/' + livro.id : '/livros/novo' %>" method="POST">
+        
+        <div class="form-group">
+          <label for="titulo">Título do Livro</label>
+          <input type="text" id="titulo" name="titulo" value="<%= livro ? livro.titulo : '' %>" required placeholder="Digite o título...">
+        </div>
+
+        <div class="form-group">
+          <label for="autor">Autor(a)</label>
+          <input type="text" id="autor" name="autor" value="<%= livro ? livro.autor : '' %>" placeholder="Ex: Machado de Assis">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+              <option value="disponivel" <%= livro && livro.status === 'disponivel' ? 'selected' : '' %>>Disponível</option>
+              <option value="emprestado" <%= livro && livro.status === 'emprestado' ? 'selected' : '' %>>Emprestado</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit">
+          <%= livro && livro.id ? 'Salvar Alterações' : 'Cadastrar Livro' %>
+        </button>
+
+        <a href="/" class="btn-back">← Voltar para o Catálogo</a>
+      </form>
+    </div>
+  </main>
+
+  <!-- Rodapé padrão do seu projeto -->
+  <footer>
+    <p>© Bernardo, Paulo, Alice, João Victor e Emanuel</p>
+  </footer>
+
+</body>
+</html>

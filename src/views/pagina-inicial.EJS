@@ -10,6 +10,7 @@
 
   <header class="header">
     <div class="header-top">
+      <!-- Apenas o botão Entrar no canto superior -->
       <a href="/login" class="btn-header-login">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
           <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2 5s-1 1-4 1-4-1-4-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
@@ -29,7 +30,15 @@
 
   <main class="container">
     <section class="catalog-section">
-      <h2>Livros Disponíveis</h2>
+      
+      <!-- Único botão de Cadastrar Livro -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Livros Disponíveis</h2>
+        <a href="/livros/novo" style="background-color: #3d2410; color: #ffffff; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: background-color 0.2s;">
+          + Cadastrar Livro
+        </a>
+      </div>
+
       <div class="books-grid">
         
         <% itens.forEach(livro => { %>
