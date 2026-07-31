@@ -2,6 +2,9 @@ import fs from "fs";
 import path from "path";
 import { Livro } from "../entities/Livro";
 
+type LivroAtualizavel = Partial<Pick<Livro, "titulo" | "autor" | "disponivel" | "capaUrl">>;
+
+
 export class LivroRepository {
 
     private caminho = path.resolve("dados", "livros.json");
@@ -55,7 +58,15 @@ export class LivroRepository {
 
     criar(livro: Livro): void {
 
+        if (!livro.validar()) {
+        throw new Error("Livro inválido!");
+    }
+
         const livros = this.lerArquivo();
+
+        if (livros.some(l => l.id === livro.id)) {
+        throw new Error("Já existe um livro com este ID.");
+    }
 
         livros.push(livro);
 
@@ -63,7 +74,8 @@ export class LivroRepository {
 
     }
 
-    atualizar(id: string, dados: Partial<Livro>): boolean {
+
+    atualizar(id: string, dados: LivroAtualizavel): boolean {
 
         const livros = this.lerArquivo();
 
@@ -75,7 +87,7 @@ export class LivroRepository {
             return false;
         }
 
-        const livro = livros[indice];
+        const livro = livros[indice]!;
 
         if (dados.titulo !== undefined) {
             livro.titulo = dados.titulo;
