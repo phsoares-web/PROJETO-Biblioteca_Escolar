@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import session from 'express-session';
 import path from 'path';
 import livrosRoutes from './routes/livros';
 
@@ -9,23 +10,45 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Arquivos estáticos (CSS, JS, Imagens da pasta public)
-app.use(express.static(path.resolve(__dirname, '..', 'public')));
+// Arquivos estáticos (Usando process.cwd() para encontrar a pasta 'public' na raiz independente de compilação)
+app.use(express.static(path.join(process.cwd(), 'public')));
 
-// Configura o EJS
+// Configuração do Express Session
+app.use(session({
+  secret: 'biblioteca-aluisio-azevedo-secret-key',
+  resave: false,
+  saveUninitialized: false
+}));
+
+// Configura o EJS (Buscando a pasta views a partir da raiz do projeto)
 app.set('view engine', 'ejs');
-app.set('views', path.resolve(__dirname, 'views'));
+app.set('views', path.join(process.cwd(), 'src', 'views'));
 
-// Estrutura do Livro atualizada com capa
+// Middleware Global: Injeta o usuário logado em TODAS as telas (views)
+app.use((req: Request, res: Response, next) => {
+  res.locals.usuario = (req.session as any).usuario || null;
+  next();
+});
+
+// Tipagens
+export interface Usuario {
+  nome: string;
+  email: string;
+  senha?: string;
+}
+
 export interface Livro {
   id: number;
   titulo: string;
   autor?: string;
-  capa?: string; // Guarda o caminho da imagem enviada
+  capa?: string;
   status: 'disponivel' | 'emprestado';
 }
 
-// Lista global de livros na memória
+// Lista global de usuários em memória
+export const usuarios: Usuario[] = [];
+
+// Lista global de livros em memória
 export let livros: Livro[] = [
   { id: 1, titulo: 'Dom Casmurro', autor: 'Machado de Assis', status: 'disponivel' },
   { id: 2, titulo: 'O Cortiço', autor: 'Aluísio Azevedo', status: 'emprestado' },
@@ -45,19 +68,66 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.get('/login', (req: Request, res: Response) => {
-  res.render('login', { titulo: 'Biblioteca Aluísio Azevedo' });
+  res.render('login', { titulo: 'Biblioteca Aluísio Azevedo', erro: null });
+});
+
+// Rota de Logout
+app.get('/logout', (req: Request, res: Response) => {
+  req.session.destroy(() => {
+    res.redirect('/');
+  });
 });
 
 // --- ROTAS DE AUTENTICAÇÃO (POST) ---
+
+// 1. Rota de Login (Valida se o usuário já existe)
 app.post('/login', (req: Request, res: Response) => {
   const { email, senha } = req.body;
-  console.log('Login efetuado:', { email });
+
+  const usuarioEncontrado = usuarios.find(u => u.email === email && u.senha === senha);
+
+  if (!usuarioEncontrado) {
+    return res.render('login', { 
+      titulo: 'Biblioteca Aluísio Azevedo', 
+      erro: 'Conta não encontrada ou dados incorretos. Cadastre-se antes de entrar!' 
+    });
+  }
+
+  (req.session as any).usuario = usuarioEncontrado;
+  console.log('Login efetuado:', { email: usuarioEncontrado.email });
+
   res.redirect('/');
 });
 
+// 2. Rota de Cadastro
 app.post('/register', (req: Request, res: Response) => {
   const { nome, email, senha } = req.body;
-  console.log('Novo usuário cadastrado:', { nome, email });
+
+  if (!email || !senha) {
+    return res.render('login', { 
+      titulo: 'Biblioteca Aluísio Azevedo', 
+      erro: 'Preencha todos os campos obrigatórios para se cadastrar.' 
+    });
+  }
+
+  const usuarioExistente = usuarios.find(u => u.email === email);
+  if (usuarioExistente) {
+    return res.render('login', { 
+      titulo: 'Biblioteca Aluísio Azevedo', 
+      erro: 'Este e-mail já está cadastrado. Faça login para acessar.' 
+    });
+  }
+
+  const novoUsuario: Usuario = { 
+    nome: nome || email.split('@')[0], 
+    email, 
+    senha 
+  };
+  usuarios.push(novoUsuario);
+
+  (req.session as any).usuario = novoUsuario;
+  console.log('Novo usuário cadastrado:', { nome: novoUsuario.nome, email: novoUsuario.email });
+
   res.redirect('/');
 });
 

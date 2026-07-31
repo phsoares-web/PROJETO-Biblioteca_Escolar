@@ -11,7 +11,7 @@
   <header class="header">
     <div class="header-container">
       <div class="logo">
-        <img src="/logo-winrar.png" alt="Logo WinRAR" class="logo-img">
+        <img src="/uploads/logo-winrar.png" alt="Logo WinRAR" class="logo-img">
         <h1><%= titulo %></h1>
       </div>
       <p class="subtitle">Acesso ao Sistema</p>
@@ -21,7 +21,14 @@
   <main class="container flex-center">
     <div class="login-card">
       
-      <!-- Abas para Trocar entre Entrar e Cadastrar (Colocadas no lugar certo!) -->
+      <!-- EXIBIÇÃO DE MENSAGEM DE ERRO (CASO EXISTA) -->
+      <% if (typeof erro !== 'undefined' && erro) { %>
+        <div style="background-color: #fbe9e7; color: #c62828; border: 1px solid #ffcdd2; padding: 10px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; margin-bottom: 16px; text-align: center;">
+          <%= erro %>
+        </div>
+      <% } %>
+
+      <!-- Abas para Trocar entre Entrar e Cadastrar -->
       <div class="tabs">
         <button id="tab-login" class="tab-btn active" onclick="switchTab('login')">Entrar</button>
         <button id="tab-register" class="tab-btn" onclick="switchTab('register')">Cadastrar-se</button>
