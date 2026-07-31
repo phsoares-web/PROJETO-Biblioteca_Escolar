@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso - <%= titulo %></title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-container">
+      <div class="logo">
+        <img src="/logo-winrar.png" alt="Logo WinRAR" class="logo-img">
+        <h1><%= titulo %></h1>
+      </div>
+      <p class="subtitle">Acesso ao Sistema</p>
+    </div>
+  </header>
+
+  <main class="container flex-center">
+    <div class="login-card">
+      
+      <!-- Abas para Trocar entre Entrar e Cadastrar -->
+      <div class="tabs">
+        <button id="tab-login" class="tab-btn active" onclick="switchTab('login')">Entrar</button>
+        <button id="tab-register" class="tab-btn" onclick="switchTab('register')">Cadastrar-se</button>
+      </div>
+
+      <!-- FORMULÁRIO DE LOGIN -->
+      <form id="form-login" action="/login" method="POST" class="auth-form">
+        <div class="form-group">
+          <label for="login-email">E-mail</label>
+          <input type="email" id="login-email" name="email" placeholder="seu@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="login-senha">Senha</label>
+          <input type="password" id="login-senha" name="senha" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="btn-primary">Entrar</button>
+      </form>
+
+      <!-- FORMULÁRIO DE CADASTRO -->
+      <form id="form-register" action="/register" method="POST" class="auth-form hidden">
+        <div class="form-group">
+          <label for="reg-nome">Nome Completo</label>
+          <input type="text" id="reg-nome" name="nome" placeholder="Seu nome" required>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-email">E-mail</label>
+          <input type="email" id="reg-email" name="email" placeholder="seu@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-senha">Criar Senha</label>
+          <input type="password" id="reg-senha" name="senha" placeholder="Crie uma senha" required>
+        </div>
+
+        <button type="submit" class="btn-primary">Criar Conta</button>
+      </form>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; Bernardo, Paulo, Alice, João Victor e Emanuel</p>
+  </footer>
+
+  <!-- Script para alternar as abas de Login e Cadastro -->
+  <script>
+    function switchTab(tab) {
+      const formLogin = document.getElementById('form-login');
+      const formRegister = document.getElementById('form-register');
+      const tabLogin = document.getElementById('tab-login');
+      const tabRegister = document.getElementById('tab-register');
+
+      if (tab === 'login') {
+        formLogin.classList.remove('hidden');
+        formRegister.classList.add('hidden');
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+      } else {
+        formLogin.classList.add('hidden');
+        formRegister.classList.remove('hidden');
+        tabRegister.classList.add('active');
+        tabLogin.classList.remove('active');
+      }
+    }
+  </script>
+
+</body>
+</html>
