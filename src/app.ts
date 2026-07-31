@@ -5,26 +5,27 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
-
-// Configura o EJS e a pasta de views
+// Configura o EJS como view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Middlewares para ler dados de requisições
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-// Servir arquivos estáticos da pasta public
+// Servidor de arquivos estáticos (CSS, imagens, etc.)
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Rota principal
-app.get('/', (req: Request, res: Response): void => {
-    res.render('pagina-inicial', {
-        titulo: 'Biblioteca Escolar',
-        mensagem: 'Sistema rodando com sucesso!',
-        itens: ['Livro 1', 'Livro 2', 'Livro 3']
-    });
+// Rota Principal (Página Inicial / Catálogo)
+app.get('/', (req, res) => {
+  res.render('pagina-inicial', {
+    titulo: 'Biblioteca Aluísio Azevedo',
+    mensagem: 'Sistema rodando com sucesso!',
+    itens: ['Livro 1', 'Livro 2', 'Livro 3']
+  });
+});
+
+// Rota de Login / Cadastro
+app.get('/login', (req, res) => {
+  res.render('login', {
+    titulo: 'Biblioteca Aluísio Azevedo'
+  });
 });
 
 export default app;
