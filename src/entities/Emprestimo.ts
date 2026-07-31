@@ -19,11 +19,11 @@ export class Emprestimo {
     dataDevolucaoReal: Date | null
   ) {
     this._id = id;
-    this.alunoId = alunoId;
-    this.livroId = livroId;
-    this.dataEmprestimo = dataEmprestimo;
-    this.dataDevolucaoPrevista = dataDevolucaoPrevista;
-    this.dataDevolucaoReal = dataDevolucaoReal;
+    this._alunoId = alunoId;
+    this._livroId = livroId;
+    this._dataEmprestimo = dataEmprestimo;
+    this._dataDevolucaoPrevista = dataDevolucaoPrevista;
+    this._dataDevolucaoReal = dataDevolucaoReal;
   }
 
 // Getters e Setters VALIDADOS
