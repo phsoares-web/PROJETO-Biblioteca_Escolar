@@ -1,21 +1,40 @@
 import { Router, Request, Response } from 'express';
+import multer from 'multer';
+import path from 'path';
 import { livros, Livro } from '../app';
 
 const router = Router();
 
-// Rota para abrir o formulário de NOVO livro
+// Configuração do Multer para armazenamento dos uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.resolve(__dirname, '..', '..', 'public', 'uploads'));
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+  }
+});
+
+const upload = multer({ storage });
+
+// Rota de renderização do formulário de criação
 router.get('/novo', (req: Request, res: Response) => {
   res.render('formulario', { livro: null });
 });
 
-// Processa o cadastro de NOVO livro
-router.post('/novo', (req: Request, res: Response) => {
-  const { titulo, autor, status } = req.body;
+// Rota de criação do livro
+router.post('/novo', upload.single('capa'), (req: Request, res: Response) => {
+  const { titulo, autor, status } = req.body || {};
+
+  const capaPath = req.file ? `/uploads/${req.file.filename}` : undefined;
 
   const novoLivro: Livro = {
     id: livros.length > 0 ? livros[livros.length - 1].id + 1 : 1,
     titulo: titulo || 'Sem título',
-    autor: autor || 'Desconhecido',
+    autor: autor || '',
+    capa: capaPath,
     status: status || 'disponivel'
   };
 
@@ -23,32 +42,33 @@ router.post('/novo', (req: Request, res: Response) => {
   res.redirect('/');
 });
 
-// Renderiza a página para EDITAR livro
+// Rota de renderização do formulário de edição
 router.get('/editar/:id', (req: Request, res: Response) => {
   const paramId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const id = parseInt(paramId, 10);
   const livroEncontrado = livros.find(l => l.id === id);
 
-  if (!livroEncontrado) {
-    return res.redirect('/');
-  }
+  if (!livroEncontrado) return res.redirect('/');
 
   res.render('formulario', { livro: livroEncontrado });
 });
 
-// Processa a EDIÇÃO do livro
-router.post('/editar/:id', (req: Request, res: Response) => {
+// Rota de atualização do livro
+router.post('/editar/:id', upload.single('capa'), (req: Request, res: Response) => {
   const paramId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const id = parseInt(paramId, 10);
-  const { titulo, autor, status } = req.body;
   
-  // Usando l em vez do número 1
+  const { titulo, autor, status } = req.body || {};
   const livroIndex = livros.findIndex(l => l.id === id);
 
   if (livroIndex !== -1) {
-    livros[livroIndex].titulo = titulo;
-    livros[livroIndex].autor = autor;
-    livros[livroIndex].status = status;
+    if (titulo) livros[livroIndex].titulo = titulo;
+    if (autor !== undefined) livros[livroIndex].autor = autor;
+    if (status) livros[livroIndex].status = status;
+    
+    if (req.file) {
+      livros[livroIndex].capa = `/uploads/${req.file.filename}`;
+    }
   }
 
   res.redirect('/');

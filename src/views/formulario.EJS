@@ -58,6 +58,12 @@
       transition: border-color 0.2s;
     }
 
+    .form-group input[type="file"] {
+      padding: 8px;
+      background-color: #ffffff;
+      cursor: pointer;
+    }
+
     .form-group input:focus,
     .form-group select:focus,
     .form-group textarea:focus {
@@ -104,6 +110,16 @@
     .btn-back:hover {
       text-decoration: underline;
     }
+
+    .preview-capa {
+      display: block;
+      max-width: 100px;
+      max-height: 140px;
+      margin-top: 8px;
+      border-radius: 4px;
+      border: 1px solid #dcd1ba;
+      object-fit: cover;
+    }
   </style>
 </head>
 <body>
@@ -121,7 +137,8 @@
     <div class="form-card">
       <h2><%= livro && livro.id ? 'Editar Livro' : 'Cadastrar Novo Livro' %></h2>
 
-      <form action="<%= livro && livro.id ? '/livros/editar/' + livro.id : '/livros/novo' %>" method="POST">
+      <!-- ADICIONADO enctype="multipart/form-data" para permitir envio de imagem -->
+      <form action="<%= livro && livro.id ? '/livros/editar/' + livro.id : '/livros/novo' %>" method="POST" enctype="multipart/form-data">
         
         <div class="form-group">
           <label for="titulo">Título do Livro</label>
@@ -131,6 +148,16 @@
         <div class="form-group">
           <label for="autor">Autor(a)</label>
           <input type="text" id="autor" name="autor" value="<%= livro ? livro.autor : '' %>" placeholder="Ex: Machado de Assis">
+        </div>
+
+        <!-- CAMPO DE UPLOAD DA CAPA -->
+        <div class="form-group">
+          <label for="capa">Foto da Capa</label>
+          <input type="file" id="capa" name="capa" accept="image/*">
+          <% if (livro && livro.capa) { %>
+            <p style="font-size: 0.8rem; color: #666; margin-top: 6px;">Capa atual:</p>
+            <img src="<%= livro.capa %>" alt="Capa do livro" class="preview-capa">
+          <% } %>
         </div>
 
         <div class="form-row">
@@ -154,7 +181,7 @@
 
   <!-- Rodapé padrão do seu projeto -->
   <footer>
-    <p>© Bernardo, Paulo, Alice, João Victor e Emanuel</p>
+    <p>&copy; Bernardo, Paulo, Alice, João Victor e Emanuel</p>
   </footer>
 
 </body>

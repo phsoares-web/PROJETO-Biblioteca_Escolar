@@ -8,18 +8,19 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Arquivos estáticos (CSS, JS, Imagens)
+// Arquivos estáticos (CSS, JS, Imagens da pasta public)
 app.use(express.static(path.resolve(__dirname, '..', 'public')));
 
 // Configura o EJS
 app.set('view engine', 'ejs');
 app.set('views', path.resolve(__dirname, 'views'));
 
-// Estrutura do Livro
+// Estrutura do Livro atualizada com capa
 export interface Livro {
   id: number;
   titulo: string;
   autor?: string;
+  capa?: string; // <--- Guarda o caminho da imagem enviada
   status: 'disponivel' | 'emprestado';
 }
 
