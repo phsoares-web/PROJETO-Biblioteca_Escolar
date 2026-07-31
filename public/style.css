@@ -1,62 +1,288 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+  /* --- Reset e Fontes --- */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: #f1f5f9;
-  color: #1e293b;
-  max-width: 500px;
-  margin: 50px auto;
-  padding: 24px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
+  html {
+    height: 100%;
+  }
 
-h1 {
-  font-size: 1.5rem;
-  color: #0f172a;
-  margin-bottom: 12px;
-}
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #F7F3E9;
+    color: #3E2723;
+    line-height: 1.6;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 
-p {
-  background: #f8fafc;
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-  font-size: 0.95rem;
-  margin-bottom: 20px;
-}
+  /* --- Cabeçalho (Header) --- */
+  .header {
+    background-color: #4A2E1B;
+    color: #F5EBE0;
+    padding: 2rem 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    border-bottom: 4px solid #9B5C42;
+  }
 
-p strong {
-  color: #2563eb;
-}
+  .header-container {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
 
-h2 {
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-  color: #334155;
-}
+  .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
 
-ul {
-  list-style: none;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  overflow: hidden;
-}
+  .logo-img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+  }
 
-li {
-  padding: 10px 14px;
-  border-bottom: 1px solid #e2e8f0;
-}
+  .logo h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #FFF;
+  }
 
-li:last-child {
-  border-bottom: none;
-}
+  .subtitle {
+    color: #D7C4B7;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
 
-li:hover {
-  background-color: #f8fafc;
-}
+  /* --- Container Principal --- */
+  .container {
+    max-width: 900px;
+    width: 100%;
+    margin: 40px auto;
+    padding: 0 20px;
+    flex: 1; 
+  }
+
+  /* --- CATÁLOGO DE LIVROS (HOME) --- */
+  .catalog-section h2 {
+    font-size: 1.4rem;
+    color: #5C3A21;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #A67B5B;
+  }
+
+  .books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .book-card {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    border: 1px solid #E2D4C9;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(111, 79, 40, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .book-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(111, 79, 40, 0.18);
+  }
+
+  .book-cover {
+    background-color: #9B5C42;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #FFF;
+  }
+
+  .book-info {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+  }
+
+  .book-info h3 {
+    font-size: 1.1rem;
+    color: #3E2723;
+    margin-bottom: 12px;
+  }
+
+  .status {
+    align-self: flex-start;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+  }
+
+  .status.available {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+    border: 1px solid #C8E6C9;
+  }
+
+  /* --- TELA DE LOGIN E CADASTRO --- */
+  .flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E2D4C9;
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 8px 16px rgba(111, 79, 40, 0.12);
+  }
+
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid #E2D4C9;
+    margin-bottom: 24px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #A67B5B;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+  }
+
+  .tab-btn.active {
+    color: #4A2E1B;
+    border-bottom-color: #4A2E1B;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #5C3A21;
+  }
+
+  .form-group input {
+    padding: 10px 14px;
+    border: 1px solid #A67B5B;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background-color: #F7F3E9;
+    color: #3E2723;
+    outline: none;
+  }
+
+  .form-group input:focus {
+    border-color: #9B5C42;
+    box-shadow: 0 0 0 2px rgba(155, 92, 66, 0.2);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: #4A2E1B;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+  }
+
+  .btn-primary:hover {
+    background-color: #6F4F28;
+  }
+
+  /* --- Rodapé (Footer) --- */
+  .footer {
+    background-color: #4A2E1B;
+    color: #D7C4B7;
+    text-align: center;
+    padding: 20px 10px;
+    border-top: 3px solid #9B5C42;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+
+  /* --- Barra Superior e Botão de Login --- */
+  .header {
+    position: relative; /* Para alinhamento do botão */
+    background-color: #4A2E1B;
+    color: #F5EBE0;
+    padding: 1.5rem 1rem 2rem 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    border-bottom: 4px solid #9B5C42;
+  }
+
+  .header-top {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+  }
+
+  .btn-header-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #F5EBE0;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(245, 235, 224, 0.3);
+    backdrop-filter: blur(4px);
+    transition: all 0.25s ease;
+  }
+
+  .btn-header-login:hover {
+    background-color: #9B5C42;
+    color: #FFFFFF;
+    border-color: #9B5C42;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn-header-login svg {
+    fill: currentColor;
+  }
