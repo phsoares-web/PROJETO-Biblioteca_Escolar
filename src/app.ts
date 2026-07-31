@@ -1,37 +1,40 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
+import livrosRoutes from './routes/livros';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Configuração de Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servidor de arquivos estáticos (CSS, imagens, JS da pasta public)
+// Arquivos estáticos (CSS, JS, Imagens)
 app.use(express.static(path.resolve(__dirname, '..', 'public')));
 
-// Configura o EJS como view engine
+// Configura o EJS
 app.set('view engine', 'ejs');
 app.set('views', path.resolve(__dirname, 'views'));
 
-// Modelo de Dados para Teste
-interface Livro {
+// Estrutura do Livro
+export interface Livro {
   id: number;
   titulo: string;
+  autor?: string;
   status: 'disponivel' | 'emprestado';
 }
 
-let livros: Livro[] = [
-  { id: 1, titulo: 'Dom Casmurro', status: 'disponivel' },
-  { id: 2, titulo: 'O Cortiço', status: 'emprestado' },
-  { id: 3, titulo: 'Memórias Póstumas de Brás Cubas', status: 'disponivel' },
-  { id: 4, titulo: 'Grande Sertão: Veredas', status: 'disponivel' }
+// Lista global de livros na memória
+export let livros: Livro[] = [
+  { id: 1, titulo: 'Dom Casmurro', autor: 'Machado de Assis', status: 'disponivel' },
+  { id: 2, titulo: 'O Cortiço', autor: 'Aluísio Azevedo', status: 'emprestado' },
+  { id: 3, titulo: 'Memórias Póstumas de Brás Cubas', autor: 'Machado de Assis', status: 'disponivel' },
+  { id: 4, titulo: 'Grande Sertão: Veredas', autor: 'Guimarães Rosa', status: 'disponivel' }
 ];
 
-// --- ROTAS DE PÁGINAS ---
+// --- ROTAS DO MÓDULO DE LIVROS ---
+app.use('/livros', livrosRoutes);
 
-// Rota Principal (Página Inicial / Catálogo)
+// --- ROTAS DAS PÁGINAS ---
 app.get('/', (req: Request, res: Response) => {
   res.render('pagina-inicial', {
     titulo: 'Biblioteca Aluísio Azevedo',
@@ -44,15 +47,12 @@ app.get('/login', (req: Request, res: Response) => {
 });
 
 // --- ROTAS DA API ---
-
-// Busca de livros via query string
 app.get('/api/livros', (req: Request, res: Response) => {
   const busca = (req.query.busca as string || '').toLowerCase();
   const resultado = livros.filter(l => l.titulo.toLowerCase().includes(busca));
   res.json(resultado);
 });
 
-// Alternar status (Empréstimo / Devolução)
 app.patch('/api/livros/:id/toggle-status', (req: Request, res: Response) => {
   const paramId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const id = parseInt(paramId, 10);
@@ -72,6 +72,4 @@ app.patch('/api/livros/:id/toggle-status', (req: Request, res: Response) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
+export default app;
