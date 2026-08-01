@@ -1,76 +1,41 @@
-import express, { Request, Response } from 'express';
-import path from 'path';
-import livrosRoutes from './routes/livros';
+// src/app.ts
+// Configuração central do Express: middlewares, sessão, EJS, arquivos
+// estáticos e as rotas do sistema. 
+// Exporta o app pronto para o server.ts apenas dar o "listen".
+
+import express from "express";
+import session from "express-session";
+import path from "path";
+
+import AlunoRoute from "./routes/AlunoRoute";
+import LivroRoute from "./routes/LivroRoute";
+import EmprestimoRoute from "./routes/EmprestimoRoute";
+import AuthRoute from "./routes/AuthRoute";
 
 const app = express();
 
-// Configuração de Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Arquivos estáticos (CSS, JS, Imagens da pasta public)
-app.use(express.static(path.resolve(__dirname, '..', 'public')));
+app.use(session({
+  secret: "sua-chave-secreta",
+  resave: false,
+  saveUninitialized: false
+}));
 
-// Configura o EJS
-app.set('view engine', 'ejs');
-app.set('views', path.resolve(__dirname, 'views'));
+app.use(express.static(path.resolve(__dirname, "..", "public")));
+app.use("/uploads", express.static(path.resolve(__dirname, "..", "uploads")));
 
-// Estrutura do Livro atualizada com capa
-export interface Livro {
-  id: number;
-  titulo: string;
-  autor?: string;
-  capa?: string; // <--- Guarda o caminho da imagem enviada
-  status: 'disponivel' | 'emprestado';
-}
+app.set("view engine", "ejs");
+app.set("views", path.resolve(__dirname, "views"));
 
-// Lista global de livros na memória
-export let livros: Livro[] = [
-  { id: 1, titulo: 'Dom Casmurro', autor: 'Machado de Assis', status: 'disponivel' },
-  { id: 2, titulo: 'O Cortiço', autor: 'Aluísio Azevedo', status: 'emprestado' },
-  { id: 3, titulo: 'Memórias Póstumas de Brás Cubas', autor: 'Machado de Assis', status: 'disponivel' },
-  { id: 4, titulo: 'Grande Sertão: Veredas', autor: 'Guimarães Rosa', status: 'disponivel' }
-];
+app.use(AuthRoute);
+app.use(AlunoRoute);
+app.use(LivroRoute);
+app.use(EmprestimoRoute);
 
-// --- ROTAS DO MÓDULO DE LIVROS ---
-app.use('/livros', livrosRoutes);
-
-// --- ROTAS DAS PÁGINAS ---
-app.get('/', (req: Request, res: Response) => {
-  res.render('pagina-inicial', {
-    titulo: 'Biblioteca Aluísio Azevedo',
-    itens: livros
-  });
-});
-
-app.get('/login', (req: Request, res: Response) => {
-  res.render('login', { titulo: 'Biblioteca Aluísio Azevedo' });
-});
-
-// --- ROTAS DA API ---
-app.get('/api/livros', (req: Request, res: Response) => {
-  const busca = (req.query.busca as string || '').toLowerCase();
-  const resultado = livros.filter(l => l.titulo.toLowerCase().includes(busca));
-  res.json(resultado);
-});
-
-app.patch('/api/livros/:id/toggle-status', (req: Request, res: Response) => {
-  const paramId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-  const id = parseInt(paramId, 10);
-  
-  const livro = livros.find(l => l.id === id);
-
-  if (!livro) {
-    res.status(404).json({ mensagem: 'Livro não encontrado' });
-    return;
-  }
-
-  livro.status = livro.status === 'disponivel' ? 'emprestado' : 'disponivel';
-
-  res.json({
-    mensagem: 'Status alterado com sucesso',
-    novoStatus: livro.status
-  });
+app.get("/", (req, res) => {
+  res.redirect("/Livros");
 });
 
 export default app;
