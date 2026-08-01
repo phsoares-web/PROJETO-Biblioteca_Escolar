@@ -228,11 +228,17 @@
       <button class="btn-filter" onclick="filtrarDisponibilidade('emprestado', this)">Apenas Emprestados</button>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-      <h2 style="color: #3d2410;">Categorias do Acervo</h2>
-      <a href="/livros/novo" style="background-color: #3d2410; color: #ffffff; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.85rem;">
-        + Cadastrar Livro
-      </a>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+      <h2 style="color: #3d2410; margin: 0;">Categorias do Acervo</h2>
+      <div style="display: flex; gap: 10px;">
+        <!-- BOTÃO DE EMPRÉSTIMOS ADICIONADO AQUI -->
+        <a href="/emprestimos" style="background-color: #8b5a2b; color: #ffffff; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.85rem;">
+           Gerenciar Empréstimos
+        </a>
+        <a href="/livros/novo" style="background-color: #3d2410; color: #ffffff; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.85rem;">
+          + Cadastrar Livro
+        </a>
+      </div>
     </div>
 
     <!-- ÁREA DE CARROSÉIS DIVIDIDOS POR CATEGORIA -->
@@ -331,7 +337,6 @@
 
     // 3. Alternar visualização por disponibilidade (Botões)
     function filtrarDisponibilidade(status, btnElement) {
-      // Atualiza estado ativo dos botões
       document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
       btnElement.classList.add('active');
 
@@ -347,15 +352,11 @@
         }
       });
 
-      // Oculta blocos de categoria caso não tenham livros visíveis no filtro selecionado
       categoryBlocks.forEach(block => {
-        const visibleCards = block.querySelectorAll('.book-card[style*="display: flex"], .book-card:not([style*="display"])');
         let hasVisible = false;
-        
         block.querySelectorAll('.book-card').forEach(c => {
           if (c.style.display !== 'none') hasVisible = true;
         });
-
         block.style.display = hasVisible ? 'block' : 'none';
       });
     }
@@ -375,7 +376,6 @@
           return;
         }
 
-        // Agrupa o resultado da busca por categoria
         const categoriasMap = {};
         livros.forEach(l => {
           const cat = l.categoria || 'Geral';

@@ -4,7 +4,6 @@ import path from 'path';
 import livrosRoutes from './routes/livros';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Configuração de Middlewares
 app.use(express.json());
@@ -13,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 // Arquivos estáticos
 app.use(express.static(path.join(process.cwd(), 'public')));
 
-// Configuração do Express Session (Mantém logado por 30 dias)
+// Configuração do Express Session
 app.use(session({
   secret: 'biblioteca-aluisio-azevedo-secret-key',
   resave: false,
@@ -57,9 +56,19 @@ export interface Livro {
   status: 'disponivel' | 'emprestado';
 }
 
+export interface Emprestimo {
+  id: number;
+  livroId: number;
+  livroTitulo: string;
+  nomeAluno: string;
+  dataEmprestimo: string;
+  dataDevolucaoPrevista: string;
+  status: 'ativo' | 'devolvido';
+}
+
 export const usuarios: Usuario[] = [];
 
-// Lista global de livros em memória vinculados com os arquivos reais da pasta uploads
+// Lista global de livros
 export let livros: Livro[] = [
   { id: 1, titulo: 'Dom Casmurro', autor: 'Machado de Assis', categoria: 'Literatura Brasileira', capa: '/uploads/dom-casmurro.jpg', status: 'disponivel' },
   { id: 2, titulo: 'O Cortiço', autor: 'Aluísio Azevedo', categoria: 'Literatura Brasileira', capa: '/uploads/o-cortiço.jpg', status: 'emprestado' },
@@ -73,6 +82,19 @@ export let livros: Livro[] = [
   { id: 10, titulo: 'Orgulho e Preconceito', autor: 'Jane Austen', categoria: 'Romance', capa: '/uploads/orgulho-e-preconceito.jpg', status: 'disponivel' }
 ];
 
+// Lista global de empréstimos
+export let emprestimos: Emprestimo[] = [
+  {
+    id: 1,
+    livroId: 2,
+    livroTitulo: 'O Cortiço',
+    nomeAluno: 'Bernardo Bueno',
+    dataEmprestimo: '2026-07-20',
+    dataDevolucaoPrevista: '2026-08-03',
+    status: 'ativo'
+  }
+];
+
 // --- ROTAS DO MÓDULO DE LIVROS ---
 app.use('/livros', exigirAutenticacao, livrosRoutes);
 
@@ -84,6 +106,64 @@ app.get('/', exigirAutenticacao, (req: Request, res: Response) => {
   });
 });
 
+// GET: Página de Listagem + Formulário de Empréstimos
+app.get('/emprestimos', exigirAutenticacao, (req: Request, res: Response) => {
+  const livrosDisponiveis = livros.filter(l => l.status === 'disponivel');
+  res.render('emprestimos', {
+    titulo: 'Gestão de Empréstimos',
+    emprestimos,
+    livrosDisponiveis
+  });
+});
+
+// POST: Registrar Empréstimo
+app.post('/emprestimos', exigirAutenticacao, (req: Request, res: Response) => {
+  const { livroId, nomeAluno, dataDevolucaoPrevista } = req.body;
+  const idLivroNum = parseInt(livroId, 10);
+
+  const livro = livros.find(l => l.id === idLivroNum);
+
+  if (livro && livro.status === 'disponivel') {
+    // Muda o status do livro para emprestado
+    livro.status = 'emprestado';
+
+    const novoEmprestimo: Emprestimo = {
+      id: emprestimos.length + 1,
+      livroId: livro.id,
+      livroTitulo: livro.titulo,
+      nomeAluno,
+      dataEmprestimo: new Date().toISOString().split('T')[0],
+      dataDevolucaoPrevista,
+      status: 'ativo'
+    };
+
+    emprestimos.unshift(novoEmprestimo);
+  }
+
+  res.redirect('/emprestimos');
+});
+
+// PATCH (API Fetch): Registrar Devolução Dinâmica
+app.patch('/api/emprestimos/:id/devolver', exigirAutenticacao, (req: Request, res: Response) => {
+  const idEmprestimo = parseInt(req.params.id, 10);
+  const emp = emprestimos.find(e => e.id === idEmprestimo);
+
+  if (!emp) {
+    return res.status(404).json({ mensagem: 'Empréstimo não encontrado' });
+  }
+
+  emp.status = 'devolvido';
+
+  // Torna o livro disponível novamente
+  const livro = livros.find(l => l.id === emp.livroId);
+  if (livro) {
+    livro.status = 'disponivel';
+  }
+
+  return res.json({ mensagem: 'Devolução registrada com sucesso!' });
+});
+
+// --- ROTAS DE AUTENTICAÇÃO ---
 app.get('/login', (req: Request, res: Response) => {
   if ((req.session as any).usuario) {
     return res.redirect('/');
@@ -97,7 +177,6 @@ app.get('/logout', (req: Request, res: Response) => {
   });
 });
 
-// --- ROTAS DE AUTENTICAÇÃO ---
 app.post('/login', (req: Request, res: Response) => {
   const { email, senha } = req.body;
   const usuarioEncontrado = usuarios.find(u => u.email === email && u.senha === senha);
@@ -140,35 +219,6 @@ app.post('/register', (req: Request, res: Response) => {
 
   (req.session as any).usuario = novoUsuario;
   res.redirect('/');
-});
-
-// --- ROTAS DA API ---
-app.get('/api/livros', exigirAutenticacao, (req: Request, res: Response) => {
-  const busca = (req.query.busca as string || '').toLowerCase();
-  const resultado = livros.filter(l => 
-    l.titulo.toLowerCase().includes(busca) || 
-    (l.autor && l.autor.toLowerCase().includes(busca)) ||
-    (l.categoria && l.categoria.toLowerCase().includes(busca))
-  );
-  res.json(resultado);
-});
-
-app.patch('/api/livros/:id/toggle-status', exigirAutenticacao, (req: Request, res: Response) => {
-  const paramId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-  const id = parseInt(paramId, 10);
-  const livro = livros.find(l => l.id === id);
-
-  if (!livro) {
-    res.status(404).json({ mensagem: 'Livro não encontrado' });
-    return;
-  }
-
-  livro.status = livro.status === 'disponivel' ? 'emprestado' : 'disponivel';
-  res.json({ mensagem: 'Status alterado com sucesso', novoStatus: livro.status });
-});
-
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
 });
 
 export default app;
