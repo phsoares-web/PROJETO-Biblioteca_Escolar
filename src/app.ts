@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import path from 'path';
 import livrosRoutes from './routes/livros';
@@ -13,11 +13,14 @@ app.use(express.urlencoded({ extended: true }));
 // Arquivos estáticos (Usando process.cwd() para encontrar a pasta 'public' na raiz independente de compilação)
 app.use(express.static(path.join(process.cwd(), 'public')));
 
-// Configuração do Express Session
+// Configuração do Express Session (Com cookie de longa duração para não deslogar ao fechar o site)
 app.use(session({
   secret: 'biblioteca-aluisio-azevedo-secret-key',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 30 // Mantém a sessão salva por 30 dias no navegador
+  }
 }));
 
 // Configura o EJS (Buscando a pasta views a partir da raiz do projeto)
@@ -25,10 +28,18 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'src', 'views'));
 
 // Middleware Global: Injeta o usuário logado em TODAS as telas (views)
-app.use((req: Request, res: Response, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   res.locals.usuario = (req.session as any).usuario || null;
   next();
 });
+
+// Middleware de Proteção de Rota (Exige que o usuário esteja logado)
+export function exigirAutenticacao(req: Request, res: Response, next: NextFunction) {
+  if ((req.session as any).usuario) {
+    return next();
+  }
+  res.redirect('/login');
+}
 
 // Tipagens
 export interface Usuario {
@@ -56,25 +67,32 @@ export let livros: Livro[] = [
   { id: 4, titulo: 'Grande Sertão: Veredas', autor: 'Guimarães Rosa', status: 'disponivel' }
 ];
 
-// --- ROTAS DO MÓDULO DE LIVROS ---
-app.use('/livros', livrosRoutes);
+// --- ROTAS DO MÓDULO DE LIVROS (Protegido por Autenticação) ---
+app.use('/livros', exigirAutenticacao, livrosRoutes);
 
 // --- ROTAS DAS PÁGINAS (GET) ---
-app.get('/', (req: Request, res: Response) => {
+
+// Página Principal (Protegida: Redireciona para /login se não estiver autenticado)
+app.get('/', exigirAutenticacao, (req: Request, res: Response) => {
   res.render('pagina-inicial', {
     titulo: 'Biblioteca Aluísio Azevedo',
     itens: livros
   });
 });
 
+// Tela de Login / Cadastro
 app.get('/login', (req: Request, res: Response) => {
+  // Se já estiver logado, redireciona direto para a página inicial
+  if ((req.session as any).usuario) {
+    return res.redirect('/');
+  }
   res.render('login', { titulo: 'Biblioteca Aluísio Azevedo', erro: null });
 });
 
 // Rota de Logout
 app.get('/logout', (req: Request, res: Response) => {
   req.session.destroy(() => {
-    res.redirect('/');
+    res.redirect('/login');
   });
 });
 
@@ -131,14 +149,14 @@ app.post('/register', (req: Request, res: Response) => {
   res.redirect('/');
 });
 
-// --- ROTAS DA API ---
-app.get('/api/livros', (req: Request, res: Response) => {
+// --- ROTAS DA API (Protegidas) ---
+app.get('/api/livros', exigirAutenticacao, (req: Request, res: Response) => {
   const busca = (req.query.busca as string || '').toLowerCase();
   const resultado = livros.filter(l => l.titulo.toLowerCase().includes(busca));
   res.json(resultado);
 });
 
-app.patch('/api/livros/:id/toggle-status', (req: Request, res: Response) => {
+app.patch('/api/livros/:id/toggle-status', exigirAutenticacao, (req: Request, res: Response) => {
   const paramId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const id = parseInt(paramId, 10);
   
