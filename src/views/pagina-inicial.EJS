@@ -5,22 +5,199 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= titulo %></title>
   <link rel="stylesheet" href="/style.css">
+  <style>
+    /* Filtro de Disponibilidade por Botões */
+    .filter-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn-filter {
+      padding: 10px 18px;
+      border: 1px solid #3d2410;
+      background-color: transparent;
+      color: #3d2410;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-filter:hover {
+      background-color: #f0e6df;
+    }
+
+    .btn-filter.active {
+      background-color: #3d2410;
+      color: #ffffff;
+    }
+
+    /* Títulos das Categorias */
+    .section-title {
+      font-size: 1.3rem;
+      color: #3d2410;
+      margin: 25px 0 12px 0;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #d4c5b9;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .carousel-wrapper {
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    /* Container de Scroll Horizontal (Arrastável) */
+    .carousel-container {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 10px 5px;
+      cursor: grab;
+      user-select: none;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .carousel-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .carousel-container.active {
+      cursor: grabbing;
+    }
+
+    /* Cards dos Livros */
+    .book-card {
+      flex: 0 0 190px;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .book-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+    }
+
+    .book-cover {
+      height: 250px;
+      width: 100%;
+      background-color: #5c3a21;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .book-cover-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .book-info {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .book-title {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #2b1810;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .book-author {
+      font-size: 0.8rem;
+      color: #666;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Badges de Status */
+    .status {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      align-self: flex-start;
+    }
+
+    .status.available {
+      background-color: #e6f4ea;
+      color: #1e7e34;
+    }
+
+    .status.borrowed {
+      background-color: #fbe9e7;
+      color: #c62828;
+    }
+
+    /* Botões de Navegação (< >) */
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      background-color: rgba(61, 36, 16, 0.85);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: background-color 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .nav-btn:hover {
+      background-color: rgba(61, 36, 16, 1);
+    }
+
+    .nav-btn.prev { left: -15px; }
+    .nav-btn.next { right: -15px; }
+  </style>
 </head>
 <body>
 
   <header class="header">
     <div class="header-top">
-      <a href="/login" class="btn-header-login">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2 5s-1 1-4 1-4-1-4-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
-        </svg>
-        Entrar
-      </a>
+      <% if (usuario) { %>
+        <div class="user-session-info">
+          <span class="user-name"><%= usuario.nome %></span>
+          <a href="/logout" class="btn-header-logout">Sair</a>
+        </div>
+      <% } else { %>
+        <a href="/login" class="btn-header-login">Entrar</a>
+      <% } %>
     </div>
 
     <div class="header-container">
       <div class="logo">
-        <img src="/logo-winrar.png" alt="Logo WinRAR" class="logo-img">
+        <img src="/uploads/logo-winrar.png" alt="Logo" class="logo-img">
         <h1><%= titulo %></h1>
       </div>
       <p class="subtitle">Acervo e Catálogo Digital</p>
@@ -29,38 +206,83 @@
 
   <main class="container">
     
-    <!-- BARRA DE BUSCA -->
-    <section class="search-section">
-      <form id="search-form" class="search-container">
+    <!-- Barra de Pesquisa -->
+    <div style="margin-bottom: 20px;">
+      <form id="search-form" style="display: flex; gap: 10px;">
         <input 
           type="text" 
           id="search-input" 
-          class="search-input" 
-          placeholder="Buscar livro por título..."
+          placeholder="Buscar por título, autor ou categoria..." 
+          style="flex: 1; padding: 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.95rem;"
         >
-        <button type="submit" class="btn-search">Buscar</button>
+        <button type="submit" style="padding: 12px 24px; background-color: #3d2410; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+          Buscar
+        </button>
       </form>
-    </section>
+    </div>
 
-    <!-- LISTAGEM DE LIVROS -->
-    <section class="catalog-section">
-      <h2>Acervo de Livros</h2>
-      <div class="books-grid" id="books-grid">
-        
-        <% itens.forEach(livro => { %>
-          <div class="book-card" data-id="<%= livro.id %>">
-            <div class="book-cover">📖</div>
-            <div class="book-info">
-              <h3><%= livro.titulo %></h3>
-              <span class="status <%= livro.status === 'disponivel' ? 'available' : 'borrowed' %>">
-                <%= livro.status %>
-              </span>
-            </div>
-          </div>
-        <% }) %>
+    <!-- Botões de Alternância de Filtro (Disponibilidade) -->
+    <div class="filter-container">
+      <button class="btn-filter active" onclick="filtrarDisponibilidade('todos', this)">Todos os Livros</button>
+      <button class="btn-filter" onclick="filtrarDisponibilidade('disponivel', this)">Apenas Disponíveis</button>
+      <button class="btn-filter" onclick="filtrarDisponibilidade('emprestado', this)">Apenas Emprestados</button>
+    </div>
 
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+      <h2 style="color: #3d2410; margin: 0;">Categorias do Acervo</h2>
+      <div style="display: flex; gap: 10px;">
+        <!-- BOTÃO DE EMPRÉSTIMOS ADICIONADO AQUI -->
+        <a href="/emprestimos" style="background-color: #8b5a2b; color: #ffffff; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.85rem;">
+           Gerenciar Empréstimos
+        </a>
+        <a href="/livros/novo" style="background-color: #3d2410; color: #ffffff; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.85rem;">
+          + Cadastrar Livro
+        </a>
       </div>
-    </section>
+    </div>
+
+    <!-- ÁREA DE CARROSÉIS DIVIDIDOS POR CATEGORIA -->
+    <div id="catalog-sections">
+      
+      <% 
+        // Agrupamento estrito por Categoria
+        const categoriasMap = {};
+        itens.forEach(l => {
+          const cat = l.categoria || 'Geral';
+          if (!categoriasMap[cat]) categoriasMap[cat] = [];
+          categoriasMap[cat].push(l);
+        });
+      %>
+
+      <% Object.keys(categoriasMap).forEach(cat => { %>
+        <div class="category-block" data-category="<%= cat %>">
+          <h3 class="section-title"><%= cat %></h3>
+          <div class="carousel-wrapper">
+            <button class="nav-btn prev" onclick="scrollCarousel(this, -300)">❮</button>
+            <div class="carousel-container">
+              <% categoriasMap[cat].forEach(livro => { %>
+                <div class="book-card" data-status="<%= livro.status %>">
+                  <div class="book-cover">
+                    <img src="<%= livro.capa || '/uploads/logo-winrar.png' %>" alt="<%= livro.titulo %>" class="book-cover-img">
+                  </div>
+                  <div class="book-info">
+                    <div>
+                      <div class="book-title" title="<%= livro.titulo %>"><%= livro.titulo %></div>
+                      <div class="book-author"><%= livro.autor || 'Autor Desconhecido' %></div>
+                    </div>
+                    <span class="status <%= livro.status === 'disponivel' ? 'available' : 'borrowed' %>">
+                      <%= livro.status === 'disponivel' ? 'Disponível' : 'Emprestado' %>
+                    </span>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+            <button class="nav-btn next" onclick="scrollCarousel(this, 300)">❯</button>
+          </div>
+        </div>
+      <% }) %>
+
+    </div>
   </main>
 
   <footer class="footer">
@@ -69,53 +291,155 @@
 
   <!-- SCRIPT DE BUSCA DINÂMICA -->
   <script>
+    // 1. Função dos botões de navegação lateral (< >)
+    function scrollCarousel(btn, distance) {
+      const wrapper = btn.closest('.carousel-wrapper');
+      const container = wrapper.querySelector('.carousel-container');
+      container.scrollBy({ left: distance, behavior: 'smooth' });
+    }
+
+    // 2. Evento para arrastar os carrosséis segurando o clique do mouse
+    function enableDragToScroll() {
+      const containers = document.querySelectorAll('.carousel-container');
+
+      containers.forEach(container => {
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        container.addEventListener('mousedown', (e) => {
+          isDown = true;
+          container.classList.add('active');
+          startX = e.pageX - container.offsetLeft;
+          scrollLeft = container.scrollLeft;
+        });
+
+        container.addEventListener('mouseleave', () => {
+          isDown = false;
+          container.classList.remove('active');
+        });
+
+        container.addEventListener('mouseup', () => {
+          isDown = false;
+          container.classList.remove('active');
+        });
+
+        container.addEventListener('mousemove', (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+          const x = e.pageX - container.offsetLeft;
+          const walk = (x - startX) * 2;
+          container.scrollLeft = scrollLeft - walk;
+        });
+      });
+    }
+
+    enableDragToScroll();
+
+    // 3. Alternar visualização por disponibilidade (Botões)
+    function filtrarDisponibilidade(status, btnElement) {
+      document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+
+      const cards = document.querySelectorAll('.book-card');
+      const categoryBlocks = document.querySelectorAll('.category-block');
+
+      cards.forEach(card => {
+        const cardStatus = card.getAttribute('data-status');
+        if (status === 'todos' || cardStatus === status) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      categoryBlocks.forEach(block => {
+        let hasVisible = false;
+        block.querySelectorAll('.book-card').forEach(c => {
+          if (c.style.display !== 'none') hasVisible = true;
+        });
+        block.style.display = hasVisible ? 'block' : 'none';
+      });
+    }
+
+    // 4. Busca Dinâmica na API
     const searchForm = document.getElementById('search-form');
     const searchInput = document.getElementById('search-input');
-    const booksGrid = document.getElementById('books-grid');
+    const catalogSections = document.getElementById('catalog-sections');
 
-    async function buscarLivros(termo = '') {
+    async function realizarBusca(termo) {
       try {
         const response = await fetch(`/api/livros?busca=${encodeURIComponent(termo)}`);
         const livros = await response.json();
 
-        booksGrid.innerHTML = '';
-
         if (livros.length === 0) {
-          booksGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #8D6E63;">Nenhum livro encontrado.</p>';
+          catalogSections.innerHTML = '<p style="text-align: center; color: #666; margin-top: 30px;">Nenhum livro encontrado.</p>';
           return;
         }
 
-        livros.forEach(livro => {
-          const isAvailable = livro.status === 'disponivel';
-          const cardHtml = `
-            <div class="book-card" data-id="${livro.id}">
-              <div class="book-cover">📖</div>
-              <div class="book-info">
-                <h3>${livro.titulo}</h3>
-                <span class="status ${isAvailable ? 'available' : 'borrowed'}">
-                  ${livro.status}
-                </span>
-              </div>
-            </div>
-          `;
-          booksGrid.innerHTML += cardHtml;
+        const categoriasMap = {};
+        livros.forEach(l => {
+          const cat = l.categoria || 'Geral';
+          if (!categoriasMap[cat]) categoriasMap[cat] = [];
+          categoriasMap[cat].push(l);
         });
-      } catch (error) {
-        console.error('Erro ao buscar livros:', error);
+
+        let html = '';
+        Object.keys(categoriasMap).forEach(cat => {
+          html += `
+            <div class="category-block" data-category="${cat}">
+              <h3 class="section-title">${cat}</h3>
+              <div class="carousel-wrapper">
+                <button class="nav-btn prev" onclick="scrollCarousel(this, -300)">❮</button>
+                <div class="carousel-container">
+          `;
+
+          categoriasMap[cat].forEach(livro => {
+            html += `
+              <div class="book-card" data-status="${livro.status}">
+                <div class="book-cover">
+                  <img src="${livro.capa || '/uploads/logo-winrar.png'}" alt="${livro.titulo}" class="book-cover-img">
+                </div>
+                <div class="book-info">
+                  <div>
+                    <div class="book-title" title="${livro.titulo}">${livro.titulo}</div>
+                    <div class="book-author">${livro.autor || 'Autor Desconhecido'}</div>
+                  </div>
+                  <span class="status ${livro.status === 'disponivel' ? 'available' : 'borrowed'}">
+                    ${livro.status === 'disponivel' ? 'Disponível' : 'Emprestado'}
+                  </span>
+                </div>
+              </div>
+            `;
+          });
+
+          html += `</div><button class="nav-btn next" onclick="scrollCarousel(this, 300)">❯</button></div></div>`;
+        });
+
+        catalogSections.innerHTML = html;
+        enableDragToScroll();
+
+      } catch (err) {
+        console.error(err);
       }
     }
 
-    // Busca ao submeter o formulário
     searchForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      buscarLivros(searchInput.value);
+      realizarBusca(searchInput.value);
     });
 
-    // Busca instantânea enquanto digita
+    let timer;
     searchInput.addEventListener('input', () => {
-      buscarLivros(searchInput.value);
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if(searchInput.value.trim() === '') {
+          window.location.reload();
+        } else {
+          realizarBusca(searchInput.value);
+        }
+      }, 300);
     });
   </script>
-
 </body>
 </html>
