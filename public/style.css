@@ -96,6 +96,37 @@ body {
   fill: currentColor;
 }
 
+.header-container {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.logo h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #FFF;
+}
+
+.subtitle {
+  color: #D7C4B7;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 /* --- BARRA DE USUÁRIO LOGADO NO CABEÇALHO --- */
 .user-session-info {
   display: inline-flex;
@@ -139,6 +170,51 @@ body {
   flex: 1; 
 }
 
+/* --- Barra de Busca --- */
+.search-section {
+  margin-bottom: 30px;
+}
+
+.search-container {
+  display: flex;
+  gap: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #A67B5B;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #FFFFFF;
+  color: #3E2723;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+  border-color: #9B5C42;
+  box-shadow: 0 0 0 3px rgba(155, 92, 66, 0.2);
+}
+
+.btn-search {
+  padding: 12px 24px;
+  background-color: #4A2E1B;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-search:hover {
+  background-color: #6F4F28;
+}
+
+/* --- CATÁLOGO DE LIVROS --- */
 /* --- CATÁLOGO DE LIVROS (HOME) --- */
 .catalog-section h2 {
   font-size: 1.4rem;
@@ -207,6 +283,12 @@ body {
   background-color: #E8F5E9;
   color: #2E7D32;
   border: 1px solid #C8E6C9;
+}
+
+.status.borrowed {
+  background-color: #FFEBEE;
+  color: #C62828;
+  border: 1px solid #FFCDD2;
 }
 
 /* --- TELA DE LOGIN E CADASTRO --- */
