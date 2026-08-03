@@ -1,12 +1,8 @@
 node_modules/
-tsconfig.json
 
 .env
 .env.local
 *.pem
-
-package-lock.json
-package.json
 
 dist/
 build/
@@ -15,3 +11,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 *.log
+
+dados/*.json
+uploads/*
+!uploads/.gitkeep
