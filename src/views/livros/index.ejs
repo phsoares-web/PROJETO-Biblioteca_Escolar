@@ -247,7 +247,7 @@
       <% 
         // Agrupamento estrito por Categoria
         const categoriasMap = {};
-        itens.forEach(l => {
+        livros.forEach(l => {
           const cat = l.categoria || 'Geral';
           if (!categoriasMap[cat]) categoriasMap[cat] = [];
           categoriasMap[cat].push(l);
@@ -263,7 +263,7 @@
               <% categoriasMap[cat].forEach(livro => { %>
                 <div class="book-card" data-status="<%= livro.status %>">
                   <div class="book-cover">
-                    <img src="<%= livro.capa || '/uploads/logo-winrar.png' %>" alt="<%= livro.titulo %>" class="book-cover-img">
+                    <img src="<%= livro.capaUrl || '/uploads/logo-winrar.png' %>" alt="<%= livro.titulo %>" class="book-cover-img">
                   </div>
                   <div class="book-info">
                     <div>
@@ -398,15 +398,15 @@
             html += `
               <div class="book-card" data-status="${livro.status}">
                 <div class="book-cover">
-                  <img src="${livro.capa || '/uploads/logo-winrar.png'}" alt="${livro.titulo}" class="book-cover-img">
+                  <img src="${livro.capaUrl || '/uploads/logo-winrar.png'}" alt="${livro.titulo}" class="book-cover-img">
                 </div>
                 <div class="book-info">
                   <div>
                     <div class="book-title" title="${livro.titulo}">${livro.titulo}</div>
                     <div class="book-author">${livro.autor || 'Autor Desconhecido'}</div>
                   </div>
-                  <span class="status ${livro.status === 'disponivel' ? 'available' : 'borrowed'}">
-                    ${livro.status === 'disponivel' ? 'Disponível' : 'Emprestado'}
+                  <span class="status ${livro.disponivel = true}">
+                    ${livro.disponivel = true}
                   </span>
                 </div>
               </div>

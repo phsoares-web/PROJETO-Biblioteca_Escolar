@@ -127,6 +127,7 @@ body {
   font-size: 0.95rem;
   letter-spacing: 1px;
   text-transform: uppercase;
+} 
 /* --- BARRA DE USUÁRIO LOGADO NO CABEÇALHO --- */
 .user-session-info {
   display: inline-flex;
