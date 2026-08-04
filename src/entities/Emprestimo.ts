@@ -1,7 +1,7 @@
 // Entidade Empréstimo
 
 export class Emprestimo {
-    private _id: string;
+    private _id: string;  // Declaração das varaveis 
     private _alunoId: string;
     private _livroId: string;
     private _dataEmprestimo: Date;
@@ -11,7 +11,7 @@ export class Emprestimo {
 // Constructor
 
   constructor(
-    id: string,
+    id: string,   // retorna ou declara variaveis 
     alunoId: string,
     livroId: string,
     dataEmprestimo: Date,
@@ -29,7 +29,7 @@ export class Emprestimo {
 // Getters e Setters VALIDADOS
 
     public get id(): string {
-        return this._id;
+        return this._id;      // Função com o objetivo de retorna os valores anteriores 
     }
     
     public get alunoId(): string {
@@ -37,10 +37,10 @@ export class Emprestimo {
     }
     
     public set alunoId(valor: string) {
-        if (!valor || valor.trim().length === 0) {
+        if (!valor || valor.trim().length === 0) { // Serve para indicar que o id do aluno e inválido caso cumpra os requisitos impostos pela lógica 
         throw new Error("ID do aluno inválido");
         }
-        this._alunoId = valor.trim();
+        this._alunoId = valor.trim(); // Exibir uma mensagem 
     }
     
     public get livroId(): string {
@@ -49,7 +49,7 @@ export class Emprestimo {
     
     public set livroId(valor: string) {
         if (!valor || valor.trim().length === 0) {
-        throw new Error("ID do livro inválido");
+        throw new Error("ID do livro inválido"); // Dizer que o id do livro e inválido quando atendido os requisitos do código 
         }
         this._livroId = valor.trim();
     }
@@ -60,20 +60,20 @@ export class Emprestimo {
     
     public set dataEmprestimo(valor: Date) {
         if (!(valor instanceof Date)) {
-        throw new Error("Data de empréstimo inválida");
+        throw new Error("Data de empréstimo inválida"); // Confere se o empréstimo e valido ou não 
         }
         this._dataEmprestimo = valor;
     }
     
     public get dataDevolucaoPrevista(): Date {
-        return this._dataDevolucaoPrevista;
+        return this._dataDevolucaoPrevista; // pega a variavel de volta 
     }
     
     public set dataDevolucaoPrevista(valor: Date) {
         if (!(valor instanceof Date)) {
-        throw new Error("Data de devolução prevista inválida");
+        throw new Error("Data de devolução prevista inválida"); // Condição de lógica que verifica se a devolução vai ser inválida caso tal requisito seja cumprido 
         }
-        this._dataDevolucaoPrevista = valor;
+        this._dataDevolucaoPrevista = valor; // retorna um valor 
     }
     
     public get dataDevolucaoReal(): Date | null {
@@ -81,16 +81,16 @@ export class Emprestimo {
     }
     
     public set dataDevolucaoReal(valor: Date | null) {
-        if (valor !== null && !(valor instanceof Date)) {
+        if (valor !== null && !(valor instanceof Date)) {  // diz que a data de devolução real vai está invalida caso a logica do programa seja cumprida 
         throw new Error("Data de devolução real inválida");
         }
-        this._dataDevolucaoReal = valor;
+        this._dataDevolucaoReal = valor; // retorna esse valor em especifico 
     }
 
 // Métodos
 
     public validar(): boolean {
-        if (!this._alunoId || this._alunoId.trim().length === 0) {
+        if (!this._alunoId || this._alunoId.trim().length === 0) {   // Função que retorna falso caso a condição imposta por ela foi cumrpida 
             return false;
         }
         if (!this._livroId || this._livroId.trim().length === 0) {
@@ -110,21 +110,21 @@ export class Emprestimo {
 
     public finalizarDevolucao(): void {
         if (this._dataDevolucaoReal !== null) {
-            throw new Error("Este empréstimo já foi finalizado");
+            throw new Error("Este empréstimo já foi finalizado"); // Dado logico que diz que o emprestimo foi feito atedendo tal requisito do código 
         }
         this._dataDevolucaoReal = new Date();
     }
 
     public estaAtrasado(): boolean {
         if (this._dataDevolucaoReal) {
-            return this._dataDevolucaoReal > this._dataDevolucaoPrevista;
+            return this._dataDevolucaoReal > this._dataDevolucaoPrevista; // Retorna um valor se a logica imposta pelo programa foi cumprida 
         }
         return new Date() > this.dataDevolucaoPrevista;
     }
 
     public toJSON() {
         return {
-            id: this._id,
+            id: this._id,   // Retorna todos os valores anteriores 
             alunoId: this._alunoId,
             livroId: this._livroId,
             dataEmprestimo: this._dataEmprestimo.toISOString(),
@@ -136,12 +136,12 @@ export class Emprestimo {
 
     public static fromJSON(dados: any): Emprestimo {
         if (!dados || !dados.id || !dados.alunoId || !dados.livroId) {
-            throw new Error("Dados inválidos!");
+            throw new Error("Dados inválidos!"); // Logica que diz quando os dados forem inválidos 
         }
 
         return new Emprestimo(
             dados.id,
-            dados.alunoId,
+            dados.alunoId,   // retorna valores 
             dados.livroId,
             new Date(dados.dataEmprestimo),
             new Date(dados.dataDevolucaoPrevista),

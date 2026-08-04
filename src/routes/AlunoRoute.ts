@@ -2,6 +2,7 @@
 // Rotas de Aluno: aqui já fica toda a lógica de tratamento de requisição
 // (listar, formulário, criar, editar, atualizar, remover, buscar).
 
+
 import { Router } from "express";
 import { randomUUID } from "crypto";
 import { Aluno } from "../entities/Aluno";
