@@ -261,7 +261,7 @@
             <button class="nav-btn prev" onclick="scrollCarousel(this, -300)">❮</button>
             <div class="carousel-container">
               <% categoriasMap[cat].forEach(livro => { %>
-                <div class="book-card" data-status="<%= livro.status %>">
+                <div class="book-card" data-status="<%= livro.disponivel %>">
                   <div class="book-cover">
                     <img src="<%= livro.capaUrl || '/uploads/logo-winrar.png' %>" alt="<%= livro.titulo %>" class="book-cover-img">
                   </div>
@@ -270,8 +270,8 @@
                       <div class="book-title" title="<%= livro.titulo %>"><%= livro.titulo %></div>
                       <div class="book-author"><%= livro.autor || 'Autor Desconhecido' %></div>
                     </div>
-                    <span class="status <%= livro.status === 'disponivel' ? 'available' : 'borrowed' %>">
-                      <%= livro.status === 'disponivel' ? 'Disponível' : 'Emprestado' %>
+                    <span class="status <%= livro.disponivel ? 'Disponível' : 'Indisponível' %>">
+                      <%= livro.disponivel ? 'Disponível' : 'Indisponível'%>
                     </span>
                   </div>
                 </div>
@@ -396,7 +396,7 @@
 
           categoriasMap[cat].forEach(livro => {
             html += `
-              <div class="book-card" data-status="${livro.status}">
+              <div class="book-card" data-status="${livro.disponivel}">
                 <div class="book-cover">
                   <img src="${livro.capaUrl || '/uploads/logo-winrar.png'}" alt="${livro.titulo}" class="book-cover-img">
                 </div>
