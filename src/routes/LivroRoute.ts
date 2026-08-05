@@ -14,7 +14,11 @@ const livroRepository = new LivroRepository();
 router.get("/livros", (req, res) => {
     try {
         const livros = livroRepository.listar();
-        res.render("livros/index", { livros });
+        res.render("livros/index", { 
+            titulo: "Catálogo dos Livros",
+            usuario: req.session?.usuarioId || null, 
+            livros
+        });
     } catch (error) {
         res.status(500).send("Erro ao listar livros.");
     }
@@ -103,7 +107,7 @@ router.delete("/livros/:id", (req, res) => {
 
 // Busca livros por título via fetch (usado no campo de busca com debounce).
 router.get("/api/livros/busca", (req, res) => {
-    const termo = String(req.query.titulo ?? "");
+    const termo = String(req.query.busca ?? "");
     const livros = livroRepository.buscarPorTitulo(termo);
     res.status(200).json(livros.map(livro => livro.toJSON()));
 });
