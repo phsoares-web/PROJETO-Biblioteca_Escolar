@@ -7,16 +7,22 @@ import { randomUUID } from "crypto";
 import { Livro } from "../entities/Livro";
 import { LivroRepository } from "../models/LivroRepository";
 import { upload } from "../middlewares/upload";
+import { UsuarioRepository } from "../models/UsuarioRepository";
 
 const router = Router();
 const livroRepository = new LivroRepository();
+const usuarioRepository = new UsuarioRepository();
 
 router.get("/livros", (req, res) => {
     try {
         const livros = livroRepository.listar();
+        const usuario = req.session?.usuarioId
+            ? usuarioRepository.buscarPorId(req.session.usuarioId)
+            : null;
+
         res.render("livros/index", { 
             titulo: "Catálogo dos Livros",
-            usuario: req.session?.usuarioId || null, 
+            usuario,
             livros
         });
     } catch (error) {

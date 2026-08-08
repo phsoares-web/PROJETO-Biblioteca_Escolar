@@ -6,6 +6,7 @@
 import express from "express";
 import session from "express-session";
 import path from "path";
+import methodOverride from "method-override";
 
 import AlunoRoute from "./routes/AlunoRoute";
 import LivroRoute from "./routes/LivroRoute";
@@ -14,6 +15,8 @@ import AuthRoute from "./routes/AuthRoute";
 
 const app = express();
 
+
+app.use(methodOverride("_method"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
