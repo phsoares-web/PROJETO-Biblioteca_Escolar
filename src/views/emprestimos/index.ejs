@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empréstimos - Biblioteca Escolar</title>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="header-container">
+        <div class="logo">
+            <img src="/logo-winrar.png" alt="Logo" class="logo-img">
+            <h1>Biblioteca Escolar</h1>
+        </div>
+        <p class="subtitle">Empréstimos</p>
+    </div>
+</header>
+
+<main class="container">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Empréstimos Registrados</h2>
+        <a href="/emprestimos/novo" class="btn-primary" style="text-decoration: none; padding: 10px 18px;">
+            + Novo Empréstimo
+        </a>
+    </div>
+
+    <table id="tabela-emprestimos">
+        <thead>
+            <tr>
+                <th>Aluno</th>
+                <th>Livro</th>
+                <th>Data do Empréstimo</th>
+                <th>Previsão de Devolução</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% emprestimos.forEach(emprestimo => { %>
+                <tr data-id="<%= emprestimo.id %>">
+                    <td><%= emprestimo.alunoNome %></td>
+                    <td><%= emprestimo.livroTitulo %></td>
+                    <td><%= new Date(emprestimo.dataEmprestimo).toLocaleDateString('pt-BR') %></td>
+                    <td><%= new Date(emprestimo.dataDevolucaoPrevista).toLocaleDateString('pt-BR') %></td>
+                    <td>
+                        <% if (emprestimo.dataDevolucaoReal) { %>
+                            <span class="status available">Devolvido</span>
+                        <% } else if (emprestimo.atrasado) { %>
+                            <span class="status borrowed">Atrasado</span>
+                        <% } else { %>
+                            <span class="status" style="background-color:#fff3cd; color:#856404;">Em andamento</span>
+                        <% } %>
+                    </td>
+                    <td>
+                        <% if (!emprestimo.dataDevolucaoReal) { %>
+                            <button class="btn-devolver" data-id="<%= emprestimo.id %>">Devolver</button>
+                        <% } %>
+                        <button class="btn-remover" data-id="<%= emprestimo.id %>">Remover</button>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <% if (emprestimos.length === 0) { %>
+        <p>Nenhum empréstimo registrado ainda.</p>
+    <% } %>
+
+    <br>
+    <a href="/livros" class="btn-back">&larr; Voltar para Livros</a>
+
+</main>
+
+<footer class="footer">
+    <p>&copy; Biblioteca Escolar</p>
+</footer>
+
+<script>
+document.querySelectorAll('.btn-devolver').forEach(botao => {
+    botao.addEventListener('click', async () => {
+        const id = botao.dataset.id;
+        if (!confirm('Confirmar devolução deste livro?')) return;
+
+        try {
+            const resposta = await fetch(`/emprestimos/${id}/devolver`, { method: 'PUT' });
+            if (resposta.redirected) {
+                window.location.href = resposta.url;
+            } else if (resposta.ok) {
+                window.location.reload();
+            } else {
+                alert('Erro ao registrar devolução.');
+            }
+        } catch (erro) {
+            alert('Erro de conexão.');
+        }
+    });
+});
+
+document.querySelectorAll('.btn-remover').forEach(botao => {
+    botao.addEventListener('click', async () => {
+        const id = botao.dataset.id;
+        if (!confirm('Tem certeza que deseja remover este empréstimo?')) return;
+
+        try {
+            const resposta = await fetch(`/emprestimos/${id}`, { method: 'DELETE' });
+            if (resposta.ok) {
+                botao.closest('tr').remove();
+            } else {
+                alert('Erro ao remover empréstimo.');
+            }
+        } catch (erro) {
+            alert('Erro de conexão.');
+        }
+    });
+});
+</script>
+
+</body>
+</html>

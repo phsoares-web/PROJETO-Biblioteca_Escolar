@@ -17,11 +17,36 @@ const livroRepository = new LivroRepository();
 
 router.get("/emprestimos", (req, res) => {
     try {
-        const emprestimos = emprestimoRepository.listar();
+        const emprestimos = emprestimoRepository.listar().map(emprestimo => {
+            const aluno = alunoRepository.buscarPorId(emprestimo.alunoId);
+            const livro = livroRepository.buscarPorId(emprestimo.livroId);
+
+            return {
+                ...emprestimo.toJSON(),
+                alunoNome: aluno ? aluno.nome : "Aluno não encontrado",
+                livroTitulo: livro ? livro.titulo : "Livro não encontrado",
+            };
+        });
+
         res.render("emprestimos/index", { emprestimos });
     } catch (error) {
         res.status(500).send("Erro ao listar empréstimos.");
     }
+});
+
+router.get("/emprestimos/atrasados", (req, res) => {
+    const emprestimos = emprestimoRepository.listarAtrasados().map(emprestimo => {
+        const aluno = alunoRepository.buscarPorId(emprestimo.alunoId);
+        const livro = livroRepository.buscarPorId(emprestimo.livroId);
+
+        return {
+            ...emprestimo.toJSON(),
+            alunoNome: aluno ? aluno.nome : "Aluno não encontrado",
+            livroTitulo: livro ? livro.titulo : "Livro não encontrado",
+        };
+    });
+
+    res.render("emprestimos/index", { emprestimos });
 });
 
 router.get("/emprestimos/novo", (req, res) => {
