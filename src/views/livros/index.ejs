@@ -23,6 +23,13 @@
   </div>
 
    <div class="header-container">
+    <nav class="main-nav">
+      <a href="/livros" class="nav-link">📚 Livros</a>
+        <% if (usuario && usuario.papel === "bibliotecario") { %>
+      <a href="/alunos" class="nav-link">🎓 Alunos</a>
+        a href="/emprestimos" class="nav-link">🔄 Empréstimos</a>
+        <% } %>
+    </nav>
      <div class="logo">
        <img src="/public/uploads/logo-winrar.png" alt="Logo" class="logo-img">
        <h1>Biblioteca Escolar</h1>
@@ -38,15 +45,13 @@
 
    <section class="catalog-section">
 
-     <div class="catalog-header">
+    <div class="catalog-header">
+      <h2>Livros</h2>
+      <% if (usuario && usuario.papel === "bibliotecario") { %>
+        <a href="/livros/novo" class="btn-primary-inline">+ Cadastrar Livro</a>
+      <% } %>
+    </div>
 
-       <h2>Livros</h2>
-
-       <a href="/livros/novo" class="btn-primary">
-         + Cadastrar Livro
-       </a>
-
-     </div>
 
      <% if(livros.length===0){ %>
 

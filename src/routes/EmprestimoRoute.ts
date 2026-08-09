@@ -9,13 +9,15 @@ import { Emprestimo } from "../entities/Emprestimo";
 import { EmprestimoRepository } from "../models/EmprestimoRepository";
 import { AlunoRepository } from "../models/AlunoRepository";
 import { LivroRepository } from "../models/LivroRepository";
+import { autenticar } from "../middlewares/auth";
+import { autorizar } from "../middlewares/autorizar";
 
 const router = Router();
 const emprestimoRepository = new EmprestimoRepository();
 const alunoRepository = new AlunoRepository();
 const livroRepository = new LivroRepository();
 
-router.get("/emprestimos", (req, res) => {
+router.get("/emprestimos", autenticar, autorizar("bibliotecario"), (req, res) => {
     try {
         const emprestimos = emprestimoRepository.listar().map(emprestimo => {
             const aluno = alunoRepository.buscarPorId(emprestimo.alunoId);
@@ -34,7 +36,7 @@ router.get("/emprestimos", (req, res) => {
     }
 });
 
-router.get("/emprestimos/atrasados", (req, res) => {
+router.get("/emprestimos/atrasados", autenticar, autorizar("bibliotecario"), (req, res) => {
     const emprestimos = emprestimoRepository.listarAtrasados().map(emprestimo => {
         const aluno = alunoRepository.buscarPorId(emprestimo.alunoId);
         const livro = livroRepository.buscarPorId(emprestimo.livroId);

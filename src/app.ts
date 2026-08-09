@@ -38,7 +38,11 @@ app.use(LivroRoute);
 app.use(EmprestimoRoute);
 
 app.get("/", (req, res) => {
-  res.redirect("/livros");
+    if (req.session.usuarioId) {
+        res.redirect("/livros");
+    } else {
+        res.render("home");
+    }
 });
 
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {

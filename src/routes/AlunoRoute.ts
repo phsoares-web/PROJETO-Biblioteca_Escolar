@@ -1,16 +1,16 @@
 // src/routes/alunoRoutes.ts
-// Rotas de Aluno: aqui já fica toda a lógica de tratamento de requisição
-// (listar, formulário, criar, editar, atualizar, remover, buscar).
-
 import { Router } from "express";
 import { randomUUID } from "crypto";
 import { Aluno } from "../entities/Aluno";
 import { AlunoRepository } from "../models/AlunoRepository";
+import { autenticar } from "../middlewares/auth";
+import { autorizar } from "../middlewares/autorizar";
 
 const router = Router();
 const alunoRepository = new AlunoRepository();
 
-router.get("/alunos", (req, res) => {
+// Listagem: qualquer papel logado pode ver
+router.get("/alunos", autenticar, autorizar("bibliotecario"), (req, res) => {
     try {
         const alunos = alunoRepository.listar();
         res.render("alunos/index", { alunos });
@@ -19,11 +19,12 @@ router.get("/alunos", (req, res) => {
     }
 });
 
-router.get("/alunos/novo", (req, res) => {
+// Escrita: só bibliotecário
+router.get("/alunos/novo", autenticar, autorizar("bibliotecario"), (req, res) => {
     res.render("alunos/form", { aluno: null, erro: null });
 });
 
-router.get("/alunos/:id/editar", (req, res) => {
+router.get("/alunos/:id/editar", autenticar, autorizar("bibliotecario"), (req, res) => {
     const id = req.params.id;
     if (!id || Array.isArray(id)) {
         res.status(400).send("ID inválido.");
@@ -39,22 +40,18 @@ router.get("/alunos/:id/editar", (req, res) => {
     res.render("alunos/form", { aluno, erro: null });
 });
 
-router.post("/alunos", (req, res) => {
+router.post("/alunos", autenticar, autorizar("bibliotecario"), (req, res) => {
     try {
         const { nome, matricula } = req.body;
-
-        // Não usamos Aluno.fromJSON aqui: ele exige um "id" já pronto,
-        // mas o id de um aluno novo é gerado agora, pelo servidor.
         const aluno = new Aluno(randomUUID(), nome, matricula);
         alunoRepository.criar(aluno);
-
         res.redirect("/alunos");
     } catch (error: any) {
         res.status(400).render("alunos/form", { aluno: req.body, erro: error.message });
     }
 });
 
-router.put("/alunos/:id", (req, res) => {
+router.put("/alunos/:id", autenticar, autorizar("bibliotecario"), (req, res) => {
     const id = req.params.id;
     if (!id || Array.isArray(id)) {
         res.status(400).send("ID inválido.");
@@ -76,10 +73,7 @@ router.put("/alunos/:id", (req, res) => {
     }
 });
 
-// Remove um aluno via fetch (DELETE), sem recarregar a página.
-// Responde em JSON porque quem chama é o JavaScript do navegador,
-// não um <form> tradicional.
-router.delete("/alunos/:id", (req, res) => {
+router.delete("/alunos/:id", autenticar, autorizar("bibliotecario"), (req, res) => {
     const id = req.params.id;
     if (!id || Array.isArray(id)) {
         res.status(400).json({ mensagem: "ID inválido." });
@@ -96,8 +90,7 @@ router.delete("/alunos/:id", (req, res) => {
     res.status(200).json({ mensagem: "Aluno removido com sucesso." });
 });
 
-// Busca alunos por nome via fetch (usado no campo de busca com debounce).
-router.get("/api/alunos/busca", (req, res) => {
+router.get("/api/alunos/busca", autenticar, (req, res) => {
     const termo = String(req.query.nome ?? "");
     const alunos = alunoRepository.buscarPorNome(termo);
     res.status(200).json(alunos.map(aluno => aluno.toJSON()));
