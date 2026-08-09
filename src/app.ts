@@ -27,7 +27,6 @@ app.use(session({
 }));
 
 app.use(express.static(path.resolve(__dirname, "..", "public")));
-app.use("/uploads", express.static(path.resolve(__dirname, "..", "uploads")));
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "views"));
@@ -38,7 +37,12 @@ app.use(LivroRoute);
 app.use(EmprestimoRoute);
 
 app.get("/", (req, res) => {
-  res.redirect("/Livros");
+  res.redirect("/livros");
+});
+
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error(err);
+    res.status(500).send("Erro interno no servidor.");
 });
 
 export default app;
