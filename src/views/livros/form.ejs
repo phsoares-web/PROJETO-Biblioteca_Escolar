@@ -16,7 +16,7 @@
  <header class="header">
    <div class="header-container">
      <div class="logo">
-       <img src="/logo-winrar.png" alt="Logo" class="logo-img">
+       <img src="public/uploads/logo-winrar.png" alt="Logo" class="logo-img">
        <h1>Biblioteca Escolar</h1>
      </div>
 
@@ -40,7 +40,7 @@
        </div>
        <% } %>
 
-         <form action="<%= livro && livro.id ? '/livros/' + livro.id + : '/livros' %>" method="POST"
+         <form action="<%= livro && livro.id ? '/livros/' + livro.id : '/livros' %>" method="POST"
            enctype="multipart/form-data">
 
            <div class="form-group">

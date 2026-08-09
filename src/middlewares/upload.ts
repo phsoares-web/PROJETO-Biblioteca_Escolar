@@ -5,11 +5,24 @@
 
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 import { randomUUID } from "crypto";
+
+// Pasta física onde as imagens ficam salvas. Fica dentro de public/
+// porque o Express serve essa pasta como estática, permitindo acessar
+// os arquivos via URL (ex.: /uploads/nome-do-arquivo.jpg).
+const pastaUploads = path.resolve("public", "uploads");
+
+// Garante que a pasta existe antes de qualquer upload — importante
+// porque uploads/ normalmente fica fora do Git (.gitignore), então
+// quem clona o repositório do zero não tem essa pasta ainda.
+if (!fs.existsSync(pastaUploads)) {
+    fs.mkdirSync(pastaUploads, { recursive: true });
+}
 
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, path.resolve("uploads"));
+        callback(null, pastaUploads);
     },
     filename: (req, file, callback) => {
         // Prefixa com um UUID para nunca colidir com outro upload,
