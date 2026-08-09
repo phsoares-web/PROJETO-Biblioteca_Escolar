@@ -29,7 +29,7 @@ export class UsuarioRepository {
         fs.writeFileSync(
             this.caminho,
             JSON.stringify(
-                usuarios.map(usuario => usuario.toJSON()),
+                usuarios.map(usuario => usuario.paraArmazenamento()),
                 null,
                 2
             )

@@ -97,6 +97,15 @@ export class Usuario {
         );
     }
 
+    public paraArmazenamento() {
+    return {
+        id: this._id,
+        nome: this._nome,
+        email: this._email,
+        senhaHash: this._senhaHash,
+    };
+}
+
     public static async criar (id: string, nome: string, email: string, senhaPlana: string): Promise<Usuario> {
         
         if(!senhaPlana) {
