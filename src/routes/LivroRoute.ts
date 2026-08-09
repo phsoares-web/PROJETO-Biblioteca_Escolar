@@ -56,7 +56,7 @@ router.post("/livros", upload.single("capa"), (req, res) => {
 
         // capaUrl vem do Multer: req.file só existe se o usuário enviou uma imagem.
         // Um livro novo sempre começa disponível (true).
-        const capaUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        const capaUrl = req.file ? `/public/uploads/${req.file.filename}` : null;
         const livro = new Livro(randomUUID(), titulo, autor, true, capaUrl);
 
         livroRepository.criar(livro);

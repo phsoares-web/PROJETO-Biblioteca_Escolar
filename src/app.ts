@@ -27,6 +27,7 @@ app.use(session({
 }));
 
 app.use(express.static(path.resolve(__dirname, "..", "public")));
+app.use("/public", express.static(path.resolve(__dirname, "..", "public")));
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "views"));
