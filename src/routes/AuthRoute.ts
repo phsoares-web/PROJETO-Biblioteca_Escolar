@@ -11,9 +11,12 @@ router.get("/auth/registro", (req, res) => {
 
 router.post("/auth/registro", async (req, res) => {
     try {
-        const { nome, email, senha } = req.body;
+        const { nome, email, senha, matricula } = req.body;
 
-        await usuarioRepository.criar(randomUUID(), nome, email, senha);
+        // Campo vazio no form vira string vazia, não null — normaliza aqui.
+        const matriculaOuNull = matricula && matricula.trim() !== "" ? matricula.trim() : null;
+
+        await usuarioRepository.criar(randomUUID(), nome, email, senha, matriculaOuNull);
         res.redirect("/auth/login");
     } catch (error: any) {
         res.status(400).render("auth/registro", { erro: error.message });
@@ -29,13 +32,13 @@ router.post("/auth/login", async (req, res) => {
         const { email, senha } = req.body;
         const usuario = await usuarioRepository.autenticar(email, senha);
 
-
         if (!usuario) {
             res.status(401).render("auth/login", { erro: "E-mail ou senha inválidos" });
             return;
         }
 
         req.session.usuarioId = usuario.id;
+        req.session.usuarioPapel = usuario.papel;
         res.redirect("/livros");
     } catch (error: any) {
         res.status(400).render("auth/login", { erro: error.message });
