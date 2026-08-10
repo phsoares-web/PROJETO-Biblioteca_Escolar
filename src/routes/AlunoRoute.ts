@@ -5,15 +5,26 @@ import { Aluno } from "../entities/Aluno";
 import { AlunoRepository } from "../models/AlunoRepository";
 import { autenticar } from "../middlewares/auth";
 import { autorizar } from "../middlewares/autorizar";
+import { UsuarioRepository } from "../models/UsuarioRepository";
 
 const router = Router();
 const alunoRepository = new AlunoRepository();
+const usuarioRepository = new UsuarioRepository();
+
+// Busca o usuário logado (pra passar pra view, decidir o que mostrar
+// na tela — nav bar, botões etc.). Reaproveitado em toda rota GET.
+function buscarUsuarioDaSessao(req: any) {
+    return req.session.usuarioId
+        ? usuarioRepository.buscarPorId(req.session.usuarioId)
+        : null;
+}
 
 // Listagem: qualquer papel logado pode ver
 router.get("/alunos", autenticar, autorizar("bibliotecario"), (req, res) => {
     try {
         const alunos = alunoRepository.listar();
-        res.render("alunos/index", { alunos });
+        const usuario = buscarUsuarioDaSessao(req);
+        res.render("alunos/index", { alunos, usuario });
     } catch (error) {
         res.status(500).send("Erro ao listar alunos.");
     }
@@ -21,7 +32,12 @@ router.get("/alunos", autenticar, autorizar("bibliotecario"), (req, res) => {
 
 // Escrita: só bibliotecário
 router.get("/alunos/novo", autenticar, autorizar("bibliotecario"), (req, res) => {
-    res.render("alunos/form", { aluno: null, erro: null });
+    try {
+        const usuario = buscarUsuarioDaSessao(req);
+        res.render("alunos/form", { aluno: null, erro: null, usuario });
+    } catch (error) {
+        res.status(500).send("Erro ao carregar formulário.");
+    }
 });
 
 router.get("/alunos/:id/editar", autenticar, autorizar("bibliotecario"), (req, res) => {
@@ -31,13 +47,18 @@ router.get("/alunos/:id/editar", autenticar, autorizar("bibliotecario"), (req, r
         return;
     }
 
-    const aluno = alunoRepository.buscarPorId(id);
-    if (!aluno) {
-        res.status(404).send("Aluno não encontrado.");
-        return;
-    }
+    try {
+        const aluno = alunoRepository.buscarPorId(id);
+        if (!aluno) {
+            res.status(404).send("Aluno não encontrado.");
+            return;
+        }
 
-    res.render("alunos/form", { aluno, erro: null });
+        const usuario = buscarUsuarioDaSessao(req);
+        res.render("alunos/form", { aluno, erro: null, usuario });
+    } catch (error) {
+        res.status(500).send("Erro ao carregar formulário.");
+    }
 });
 
 router.post("/alunos", autenticar, autorizar("bibliotecario"), (req, res) => {
@@ -47,7 +68,8 @@ router.post("/alunos", autenticar, autorizar("bibliotecario"), (req, res) => {
         alunoRepository.criar(aluno);
         res.redirect("/alunos");
     } catch (error: any) {
-        res.status(400).render("alunos/form", { aluno: req.body, erro: error.message });
+        const usuario = buscarUsuarioDaSessao(req);
+        res.status(400).render("alunos/form", { aluno: req.body, erro: error.message, usuario });
     }
 });
 
@@ -69,7 +91,8 @@ router.put("/alunos/:id", autenticar, autorizar("bibliotecario"), (req, res) => 
 
         res.redirect("/alunos");
     } catch (error: any) {
-        res.status(400).render("alunos/form", { aluno: req.body, erro: error.message });
+        const usuario = buscarUsuarioDaSessao(req);
+        res.status(400).render("alunos/form", { aluno: req.body, erro: error.message, usuario });
     }
 });
 

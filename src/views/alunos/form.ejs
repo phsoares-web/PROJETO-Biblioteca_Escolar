@@ -11,7 +11,7 @@
 <header class="header">
     <div class="header-container">
         <div class="logo">
-            <img src="/public/images/logo-winrar.png" alt="Logo" class="logo-img">
+            <img src="/public/uploads/logo-winrar.png" alt="Logo" class="logo-img">
             <h1>Biblioteca Escolar</h1>
         </div>
         <p class="subtitle">Cadastro de Alunos</p>
@@ -26,7 +26,7 @@
             <div class="erro"><%= erro %></div>
         <% } %>
 
-        <form action="<%= aluno && aluno.id ? '/alunos/' + aluno.id : '/alunos' %>" method="POST">
+        <form action="<%= aluno && aluno.id ? '/alunos/' + aluno.id + '?_method=PUT' : '/alunos' %>" method="POST">
             <div class="form-group">
                 <label for="nome">Nome</label>
                 <input type="text" id="nome" name="nome" required value="<%= aluno ? aluno.nome : '' %>">

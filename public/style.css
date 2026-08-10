@@ -596,3 +596,74 @@ body {
   background-color: rgba(255, 255, 255, 0.12);
   color: #FFFFFF;
 }
+/* --- Tabelas (Alunos / Empréstimos) --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(111, 79, 40, 0.08);
+}
+
+thead {
+  background-color: #4A2E1B;
+}
+
+thead th {
+  color: #F5EBE0;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #E2D4C9;
+  font-size: 0.9rem;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background-color: #F7F3E9;
+}
+
+/* --- Botões de ação da tabela de empréstimos --- */
+.btn-devolver,
+.btn-remover {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-right: 4px;
+}
+
+.btn-devolver {
+  background-color: #2E7D32;
+  color: #FFFFFF;
+}
+
+.btn-remover {
+  background-color: #A83232;
+  color: #FFFFFF;
+}
+
+.btn-devolver:hover,
+.btn-remover:hover {
+  opacity: 0.85;
+}
+
+/* Status "em andamento" (empréstimo ativo, ainda no prazo) */
+.status.pending {
+  background-color: #FFF3CD;
+  color: #856404;
+  border: 1px solid #FFEEBA;
+}
