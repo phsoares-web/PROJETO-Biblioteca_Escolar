@@ -1,7 +1,5 @@
 // src/routes/alunoRoutes.ts
 import { Router } from "express";
-import { randomUUID } from "crypto";
-import { Aluno } from "../entities/Aluno";
 import { AlunoRepository } from "../models/AlunoRepository";
 import { autenticar } from "../middlewares/auth";
 import { autorizar } from "../middlewares/autorizar";
@@ -30,7 +28,7 @@ router.get("/alunos", autenticar, autorizar("bibliotecario"), (req, res) => {
     }
 });
 
-// Escrita: só bibliotecário
+// Rota para formulário de novo aluno
 router.get("/alunos/novo", autenticar, autorizar("bibliotecario"), (req, res) => {
     try {
         const usuario = buscarUsuarioDaSessao(req);
@@ -119,4 +117,4 @@ router.get("/api/alunos/busca", autenticar, (req, res) => {
     res.status(200).json(alunos.map(aluno => aluno.toJSON()));
 });
 
-export default router;
+export default router; 

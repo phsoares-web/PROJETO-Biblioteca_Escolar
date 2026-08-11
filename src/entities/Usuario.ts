@@ -1,15 +1,22 @@
-import bcrypt from "bcrypt";
+// Imports
+
+import bcrypt from "bcrypt";  // Importa o comando de mesmo nome 
 
 export type PapelUsuario = "bibliotecario" | "aluno";
 
-export class Usuario {
-    private _id: string;
+export class Usuario { // Serve para exporta o usuario
+  
+// Atributos
+  
+    private _id: string; // Declaração das variaveis 
     private _nome!: string;
     private _email!: string;
     private _senhaHash!: string;
     private _matricula: string | null;
-    private _papel: PapelUsuario; // Guarda o papel real do usuário
+    private _papel: PapelUsuario; 
 
+// Constructor
+      
     constructor(
         id: string, 
         nome: string, 
@@ -26,23 +33,42 @@ export class Usuario {
         this._papel = papel;
     }
 
-    public get id(): string { return this._id; }
+// Getters e Setters VALIDADOS + método VALIDAR
 
-    public get nome(): string { return this._nome; }
+    public get id(): string {
+        return this._id;
+    }
+
+    public get nome(): string {
+        return this._nome;
+    }
+
     public set nome(valor: string) {
-        if (!valor || valor.trim().length < 3) throw new Error("Nome Inválido");
+        if (!valor || valor.trim().length < 3) {       // Nome inválido caso o requisito de lógica for cumprida 
+            throw new Error("Nome Inválido");
+        }
         this._nome = valor.trim();
     }
 
-    public get email(): string { return this._email; }
+    public get email(): string {
+        return this._email;   // Retorna um valor 
+    }
+
     public set email(valor: string) {
-        if (!valor || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor.trim())) throw new Error("E-mail Inválido");
+        if (!valor || !valor.includes("@") || valor.trim().length < 5 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor.trim())) {
+            throw new Error("E-mail Inválido");
+        }                                         // Email inválido caso a lógica for feita e cumprida 
         this._email = valor.trim().toLowerCase();
     }
 
-    public get senhaHash(): string { return this._senhaHash; }
+    public get senhaHash(): string {
+        return this._senhaHash;        // Retorna esse resultado 
+    }
+
     public set senhaHash(valor: string) {
-        if (!valor || valor.trim().length === 0) throw new Error("Hash da senha indisponível");
+        if (!valor || valor.trim().length === 0) {
+            throw new Error("Hash da senha indisponível");    // O harsh da senha estará indisponível caso a logica estive certa 
+        }
         this._senhaHash = valor;
     }
 
@@ -54,17 +80,17 @@ export class Usuario {
     }
 
     public async validarSenha(senhaDigitada: string): Promise<boolean> {
-        return await bcrypt.compare(senhaDigitada, this._senhaHash);
+        return await bcrypt.compare(senhaDigitada, this._senhaHash);       // Validar e  compara a senhar 
     }
 
     public toJSON() {
         return {
             id: this._id,
-            nome: this._nome,
+            nome: this._nome, 
             email: this._email,
             papel: this._papel,
             matricula: this._matricula,
-        };
+        };     // Retorna os valores 
     }
 
     public paraArmazenamento() {
@@ -81,20 +107,26 @@ export class Usuario {
     public validar(): boolean {
         if (!this._nome || this._nome.trim().length < 3) return false;
         if (!this._email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this._email)) return false;
-        if (!this._senhaHash) return false;
+        if (!this._senhaHash) return false;        // Retorna falso se a logica for cumprida mas retorna verdadeiro caso ela estive errada 
         return true;
     }
 
     public static fromJSON(dados: any): Usuario {
         if (!dados.id || !dados.email || !dados.senhaHash || !dados.nome) {
             throw new Error("Campos Indisponíveis");
-        }
-
+        }      //Os campos estarao indsponíveis caso a logica seja cumprida
         const matricula = typeof dados.matricula === "string" ? dados.matricula : null;
         // Se o JSON tiver 'bibliotecario', define como bibliotecario. Senão, assume 'aluno'.
         const papel: PapelUsuario = dados.papel === "bibliotecario" ? "bibliotecario" : "aluno";
-
-        return new Usuario(dados.id, dados.nome, dados.email, dados.senhaHash, matricula, papel);
+    
+        return new Usuario(
+            dados.id,
+            dados.nome,       
+            dados.email,
+            dados.senhaHash,
+            matricula,
+            papel
+        );    // Retorna novos valores 
     }
 
     public static async criar(
@@ -105,8 +137,9 @@ export class Usuario {
         matricula: string | null = null,
         papel: PapelUsuario = "aluno"
     ): Promise<Usuario> {
-        if (!senhaPlana) throw new Error("Senha inválida.");
-        const senhaHash = await bcrypt.hash(senhaPlana, 10);
-        return new Usuario(id, nome, email, senhaHash, matricula, papel);
+        if (!senhaPlana) throw new Error("Senha inválida."); // Se a senhar for plana ela será inválida
+        const SALT_ROUNDS = 10;
+        const senhaHash = await bcrypt.hash(senhaPlana, SALT_ROUNDS); // Colocar variaveis como não mutáveis 
+        return new Usuario(id, nome, email, senhaHash, matricula, papel); // Cria novas variaveis 
     }
 }
