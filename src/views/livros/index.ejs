@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Biblioteca Escolar</title>
+
+ <link rel="stylesheet" href="/style.css">
+ <link rel="stylesheet" href="/loader.css">
+</head>
+
+<body>
+  <%- include('../partials/loader') %>
+
+ <header class="header">
+  <div class="header-top">
+      <% if (usuario) { %>
+          <form action="/auth/logout" method="POST">
+              <button class="btn-header-login">Sair</button>
+          </form>
+      <% } else { %>
+          <a href="/auth/login" class="btn-header-login">Entrar</a>
+      <% } %>
+  </div>
+
+   <div class="header-container">
+    <nav class="main-nav">
+      <a href="/livros" class="nav-link">Livros</a>
+        <% if (usuario && usuario.papel === "bibliotecario") { %>
+      <a href="/alunos" class="nav-link">Alunos</a>
+        <a href="/emprestimos" class="nav-link">Empréstimos</a>
+        <% } %>
+    </nav>
+     <div class="logo">
+       <img src="/public/uploads/logo-winrar.png" alt="Logo" class="logo-img">
+       <h1>Biblioteca Escolar</h1>
+     </div>
+
+     <p class="subtitle">
+       Acervo e Catálogo Digital
+     </p>
+   </div>
+ </header>
+
+ <main class="container">
+
+   <section class="catalog-section">
+
+    <div class="catalog-header">
+      <h2>Livros</h2>
+      <% if (usuario && usuario.papel === "bibliotecario") { %>
+        <a href="/livros/novo" class="btn-primary-inline">+ Cadastrar Livro</a>
+      <% } %>
+    </div>
+
+
+     <% if(livros.length===0){ %>
+
+       <p>Nenhum livro cadastrado.</p>
+
+       <% } %>
+
+         <div class="books-grid">
+
+           <% livros.forEach(livro=> { %>
+
+             <div class="book-card">
+
+               <div class="book-cover">
+
+                 <% if(livro.capaUrl){ %>
+
+                   <img src="<%= livro.capaUrl %>" alt="<%= livro.titulo %>" class="book-cover-img">
+
+                   <% } else { %>
+
+                     <span class="book-cover-placeholder">
+                       📚
+                     </span>
+
+                     <% } %>
+
+               </div>
+
+               <div class="book-info">
+
+                 <h3>
+                   <%= livro.titulo %>
+                 </h3>
+
+                 <p>
+                   <%= livro.autor %>
+                 </p>
+
+                 <span class="status <%= livro.disponivel ? 'available' : 'borrowed' %>">
+
+                   <%= livro.disponivel ? "Disponível" : "Emprestado" %>
+
+                 </span>
+
+                 <div class="book-actions">
+
+                   <a href="/livros/<%= livro.id %>/editar" class="btn-action btn-edit">
+                     Editar
+                   </a>
+                     <button type="submit" class="btn-action btn-delete">
+                       Excluir
+                     </button>
+
+                   </form>
+
+                 </div>
+
+               </div>
+
+             </div>
+
+             <% }) %>
+
+         </div>
+
+   </section>
+
+ </main>
+
+ <footer class="footer">
+   <p>
+     &copy; Biblioteca Escolar
+   </p>
+ </footer>
+
+ <script src="/loader.js"></script>
+ <script>
+document.querySelectorAll('.btn-remover').forEach(botao => {
+    botao.addEventListener('click', async () => {
+        if (!confirm('Deseja excluir este livro?')) return;
+
+        const id = botao.dataset.id;
+        try {
+            const resposta = await fetch(`/livros/${id}`, { method: 'DELETE' });
+            if (resposta.ok) {
+                botao.closest('.book-card').remove();
+            } else {
+                alert('Erro ao excluir livro.');
+            }
+        } catch (erro) {
+            alert('Erro de conexão.');
+        }
+    });
+});
+</script>
+
+</body>
+
+</html>

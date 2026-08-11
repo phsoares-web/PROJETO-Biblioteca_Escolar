@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= aluno && aluno.id ? "Editar Aluno" : "Cadastrar Aluno" %></title>
+    <link rel="stylesheet" href="/public/style.css">
+    <link rel="stylesheet" href="/loader.css">
+</head>
+<body>
+    <%- include('../partials/loader') %>
+
+<header class="header">
+    <div class="header-container">
+        <div class="logo">
+            <img src="/public/uploads/logo-winrar.png" alt="Logo" class="logo-img">
+            <h1>Biblioteca Escolar</h1>
+        </div>
+        <p class="subtitle">Cadastro de Alunos</p>
+    </div>
+</header>
+
+<main class="container">
+    <div class="form-card">
+        <h2><%= aluno && aluno.id ? "Editar Aluno" : "Cadastrar Novo Aluno" %></h2>
+
+        <% if (erro) { %>
+            <div class="erro"><%= erro %></div>
+        <% } %>
+
+        <form action="<%= aluno && aluno.id ? '/alunos/' + aluno.id + '?_method=PUT' : '/alunos' %>" method="POST">
+            <div class="form-group">
+                <label for="nome">Nome</label>
+                <input type="text" id="nome" name="nome" required value="<%= aluno ? aluno.nome : '' %>">
+            </div>
+
+            <div class="form-group">
+                <label for="matricula">Matrícula</label>
+                <input type="text" id="matricula" name="matricula" required value="<%= aluno ? aluno.matricula : '' %>">
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <%= aluno && aluno.id ? "Salvar Alterações" : "Cadastrar Aluno" %>
+            </button>
+        </form>
+
+        <br>
+        <a href="/alunos" class="btn-back">&larr; Voltar para Alunos</a>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>&copy; Biblioteca Escolar</p>
+</footer>
+
+<script src="/loader.js"></script>
+</body>
+</html>
