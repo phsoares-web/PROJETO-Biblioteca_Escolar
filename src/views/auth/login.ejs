@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Biblioteca Escolar</title>
   <link rel="stylesheet" href="/public/style.css">
+  <link rel="stylesheet" href="/loader.css">
 
 </head>
 <body>
+  <%- include('../partials/loader') %>
 
   <header class="header">
     <div class="header-container">
@@ -61,6 +63,7 @@
     <p>&copy; Bernardo, Paulo, Alice, João Victor e Emanuel</p>
   </footer>
 
+  <script src="/loader.js"></script>
   <script>
     function togglePasswordVisibility(inputId, btnElement) {
       const input = document.getElementById(inputId);
