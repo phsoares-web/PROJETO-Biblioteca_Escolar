@@ -37,7 +37,7 @@
       <form id="form-register" action="/auth/registro" method="POST" class="auth-form">
         <div class="form-group">
           <label for="reg-nome">Nome Completo</label>
-          <input type="text" id="reg-nome" name="nome" placeholder="Seu nome" required>
+          <input type="text" id="reg-nome" name="nome" placeholder="Seu nome completo" required>
         </div>
 
         <div class="form-group">
@@ -45,9 +45,16 @@
           <input type="email" id="reg-email" name="email" placeholder="Digite seu e-mail" required>
         </div>
 
+        <!-- Matrícula do Aluno -->
         <div class="form-group">
-          <label for="reg-matricula">Matrícula (SOMENTE ALUNOS)</label>
-          <input type="text" id="reg-matricula" name="matricula" placeholder="Deixar em branco caso seja Bibliotecário">
+          <label for="reg-matricula">Matrícula (Obrigatório para Alunos)</label>
+          <input type="text" id="reg-matricula" name="matricula" placeholder="Digite sua matrícula escolar">
+        </div>
+
+        <!-- Campo para cadastro de Bibliotecário -->
+        <div class="form-group">
+          <label for="reg-chave">Chave de Acesso Admin (Somente Bibliotecários)</label>
+          <input type="password" id="reg-chave" name="chaveAdmin" placeholder="Deixe em branco se você for aluno">
         </div>
 
         <div class="form-group">

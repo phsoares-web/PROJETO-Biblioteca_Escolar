@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { randomUUID } from "crypto";
 import { UsuarioRepository } from "../models/UsuarioRepository";
+import { PapelUsuario } from "../entities/Usuario";
 
 const router = Router();
 const usuarioRepository = new UsuarioRepository();
@@ -11,12 +12,21 @@ router.get("/auth/registro", (req, res) => {
 
 router.post("/auth/registro", async (req, res) => {
     try {
-        const { nome, email, senha, matricula } = req.body;
+        const { nome, email, senha, matricula, chaveAdmin } = req.body;
 
-        // Campo vazio no form vira string vazia, não null — normaliza aqui.
         const matriculaOuNull = matricula && matricula.trim() !== "" ? matricula.trim() : null;
 
-        await usuarioRepository.criar(randomUUID(), nome, email, senha, matriculaOuNull);
+        // Se passar a senha secreta de admin, vira bibliotecario. Senão, vira aluno.
+        const CHAVE_BIBLIOTECARIO = "admin123"; 
+
+        let papel: PapelUsuario = "aluno";
+        if (chaveAdmin && chaveAdmin === CHAVE_BIBLIOTECARIO) {
+            papel = "bibliotecario";
+        }
+
+        // Se tentar se cadastrar sem senha de admin e sem matrícula, o Repository vai lançar um erro
+        await usuarioRepository.criar(randomUUID(), nome, email, senha, matriculaOuNull, papel);
+        
         res.redirect("/auth/login");
     } catch (error: any) {
         res.status(400).render("auth/registro", { erro: error.message });

@@ -1,8 +1,6 @@
 import bcrypt from "bcrypt";
-// Tipo papel respectivo a um usuário calculado a partir do campo matrícula, se matrícula: null, papel = bibliotecário;
-export type PapelUsuario = "bibliotecario" | "aluno";
 
-// Entidade Usuário
+export type PapelUsuario = "bibliotecario" | "aluno";
 
 export class Usuario {
     private _id: string;
@@ -10,13 +8,22 @@ export class Usuario {
     private _email!: string;
     private _senhaHash!: string;
     private _matricula: string | null;
+    private _papel: PapelUsuario; // Guarda o papel real do usuário
 
-    constructor(id: string, nome: string, email: string, senhaHash: string, matricula: string | null = null) {
+    constructor(
+        id: string, 
+        nome: string, 
+        email: string, 
+        senhaHash: string, 
+        matricula: string | null = null,
+        papel: PapelUsuario = "aluno" // Por padrão é sempre "aluno"
+    ) {
         this._id = id;
         this.nome = nome;
         this.email = email;
         this.senhaHash = senhaHash;
         this._matricula = matricula;
+        this._papel = papel;
     }
 
     public get id(): string { return this._id; }
@@ -41,8 +48,9 @@ export class Usuario {
 
     public get matricula(): string | null { return this._matricula; }
 
+    // Retorna o papel real armazenado
     public get papel(): PapelUsuario {
-        return this._matricula ? "aluno" : "bibliotecario";
+        return this._papel;
     }
 
     public async validarSenha(senhaDigitada: string): Promise<boolean> {
@@ -54,7 +62,7 @@ export class Usuario {
             id: this._id,
             nome: this._nome,
             email: this._email,
-            papel: this.papel,
+            papel: this._papel,
             matricula: this._matricula,
         };
     }
@@ -66,6 +74,7 @@ export class Usuario {
             email: this._email,
             senhaHash: this._senhaHash,
             matricula: this._matricula,
+            papel: this._papel, // Salva o papel no JSON
         };
     }
 
@@ -82,7 +91,10 @@ export class Usuario {
         }
 
         const matricula = typeof dados.matricula === "string" ? dados.matricula : null;
-        return new Usuario(dados.id, dados.nome, dados.email, dados.senhaHash, matricula);
+        // Se o JSON tiver 'bibliotecario', define como bibliotecario. Senão, assume 'aluno'.
+        const papel: PapelUsuario = dados.papel === "bibliotecario" ? "bibliotecario" : "aluno";
+
+        return new Usuario(dados.id, dados.nome, dados.email, dados.senhaHash, matricula, papel);
     }
 
     public static async criar(
@@ -90,10 +102,11 @@ export class Usuario {
         nome: string,
         email: string,
         senhaPlana: string,
-        matricula: string | null = null
+        matricula: string | null = null,
+        papel: PapelUsuario = "aluno"
     ): Promise<Usuario> {
         if (!senhaPlana) throw new Error("Senha inválida.");
         const senhaHash = await bcrypt.hash(senhaPlana, 10);
-        return new Usuario(id, nome, email, senhaHash, matricula);
+        return new Usuario(id, nome, email, senhaHash, matricula, papel);
     }
 }
