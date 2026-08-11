@@ -7,24 +7,36 @@ import { randomUUID } from "crypto";
 import { Livro } from "../entities/Livro";
 import { LivroRepository } from "../models/LivroRepository";
 import { upload } from "../middlewares/upload";
+import { UsuarioRepository } from "../models/UsuarioRepository";
+import { autenticar } from "../middlewares/auth";
+import { autorizar } from "../middlewares/autorizar";
 
 const router = Router();
 const livroRepository = new LivroRepository();
+const usuarioRepository = new UsuarioRepository();
 
 router.get("/livros", (req, res) => {
     try {
         const livros = livroRepository.listar();
-        res.render("livros/index", { livros });
+        const usuario = req.session?.usuarioId
+            ? usuarioRepository.buscarPorId(req.session.usuarioId)
+            : null;
+
+        res.render("livros/index", { 
+            titulo: "Catálogo dos Livros",
+            usuario,
+            livros
+        });
     } catch (error) {
         res.status(500).send("Erro ao listar livros.");
     }
 });
 
-router.get("/livros/novo", (req, res) => {
+router.get("/livros/novo", autenticar, autorizar("bibliotecario"), (req, res) => {
     res.render("livros/form", { livro: null, erro: null });
 });
 
-router.get("/livros/:id/editar", (req, res) => {
+router.get("/livros/:id/editar", autenticar, autorizar("bibliotecario"), (req, res) => {
     const id = req.params.id;
     if (!id || Array.isArray(id)) {
         res.status(400).send("ID inválido.");
@@ -40,13 +52,13 @@ router.get("/livros/:id/editar", (req, res) => {
     res.render("livros/form", { livro, erro: null });
 });
 
-router.post("/livros", upload.single("capa"), (req, res) => {
+router.post("/livros", autenticar, autorizar("bibliotecario"), upload.single("capa"), (req, res) => {
     try {
         const { titulo, autor } = req.body;
 
         // capaUrl vem do Multer: req.file só existe se o usuário enviou uma imagem.
         // Um livro novo sempre começa disponível (true).
-        const capaUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        const capaUrl = req.file ? `/uploads/capas/${req.file.filename}` : null;
         const livro = new Livro(randomUUID(), titulo, autor, true, capaUrl);
 
         livroRepository.criar(livro);
@@ -56,7 +68,7 @@ router.post("/livros", upload.single("capa"), (req, res) => {
     }
 });
 
-router.put("/livros/:id", upload.single("capa"), (req, res) => {
+router.put("/livros/:id", autenticar, autorizar("bibliotecario"), upload.single("capa"), (req, res) => {
     const id = req.params.id;
     if (!id || Array.isArray(id)) {
         res.status(400).send("ID inválido.");
@@ -69,7 +81,7 @@ router.put("/livros/:id", upload.single("capa"), (req, res) => {
         // Só troca a capa se um novo arquivo foi enviado; senão mantém a atual.
         const dados: any = { titulo, autor };
         if (req.file) {
-            dados.capaUrl = `/uploads/${req.file.filename}`;
+            dados.capaUrl = `/uploads/capas/${req.file.filename}`;
         }
 
         const atualizado = livroRepository.atualizar(id, dados);
@@ -84,7 +96,7 @@ router.put("/livros/:id", upload.single("capa"), (req, res) => {
     }
 });
 
-router.delete("/livros/:id", (req, res) => {
+router.delete("/livros/:id", autenticar, autorizar("bibliotecario"), (req, res) => {
     const id = req.params.id;
     if (!id || Array.isArray(id)) {
         res.status(400).json({ mensagem: "ID inválido." });
@@ -103,7 +115,7 @@ router.delete("/livros/:id", (req, res) => {
 
 // Busca livros por título via fetch (usado no campo de busca com debounce).
 router.get("/api/livros/busca", (req, res) => {
-    const termo = String(req.query.titulo ?? "");
+    const termo = String(req.query.busca ?? "");
     const livros = livroRepository.buscarPorTitulo(termo);
     res.status(200).json(livros.map(livro => livro.toJSON()));
 });
