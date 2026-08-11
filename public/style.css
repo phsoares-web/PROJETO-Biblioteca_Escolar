@@ -667,3 +667,22 @@ tbody tr:hover {
   color: #856404;
   border: 1px solid #FFEEBA;
 }
+
+.icon-eye {
+  width: 20px;
+  height: 20px;
+  fill: #5C3A21;
+  display: block;
+  pointer-events: none; 
+}
+
+/* Ajuste no botão onde o ícone fica dentro */
+.toggle-password-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -14,10 +14,11 @@
     <div class="header-container">
       <div class="logo">
         <img src="/public/uploads/logo-winrar.png" alt="Logo WinRAR" class="logo-img">
-        <h1>Biblioteca Escolar</h1>
+          <h1>Biblioteca "Aluísio Azevedo"</h1>
       </div>
-      <p class="subtitle">Acesso ao Sistema</p>
-    </div>
+    <p class="subtitle">
+      ✎ᝰ.ᐟ⋆⑅˚₊ Acessando sistema... ᝰ.ᐟ
+    </p>
   </header>
 
   <main class="container flex-center">
@@ -37,7 +38,7 @@
       <form id="form-register" action="/auth/registro" method="POST" class="auth-form">
         <div class="form-group">
           <label for="reg-nome">Nome Completo</label>
-          <input type="text" id="reg-nome" name="nome" placeholder="Seu nome" required>
+          <input type="text" id="reg-nome" name="nome" placeholder="Seu nome completo" required>
         </div>
 
         <div class="form-group">
@@ -46,8 +47,13 @@
         </div>
 
         <div class="form-group">
-          <label for="reg-matricula">Matrícula (SOMENTE ALUNOS)</label>
-          <input type="text" id="reg-matricula" name="matricula" placeholder="Deixar em branco caso seja Bibliotecário">
+          <label for="reg-matricula">Matrícula (Obrigatório para Alunos)</label>
+          <input type="text" id="reg-matricula" name="matricula" placeholder="Digite sua matrícula escolar">
+        </div>
+
+        <div class="form-group">
+          <label for="reg-chave">Chave de Acesso Admin (Somente Bibliotecários)</label>
+          <input type="password" id="reg-chave" name="chaveAdmin" placeholder="Deixe em branco se você for aluno">
         </div>
 
         <div class="form-group">
@@ -67,6 +73,15 @@
 
     </div>
   </main>
+
+                  <a
+                href="/"
+                class="btn-back"
+                >
+                  ← Voltar para Página Principal
+                </a>
+
+             </div>
 
   <footer class="footer">
     <p>&copy; Bernardo, Paulo, Alice, João Victor e Emanuel</p>

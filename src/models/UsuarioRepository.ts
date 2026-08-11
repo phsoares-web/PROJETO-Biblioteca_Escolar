@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { Usuario } from "../entities/Usuario";
+import { Usuario, PapelUsuario } from "../entities/Usuario"; // Importado PapelUsuario
 import { AlunoRepository } from "./AlunoRepository";
 
 type UsuarioAtualizavel = Partial<Pick<Usuario, "nome" | "email">>;
@@ -8,7 +8,7 @@ type UsuarioAtualizavel = Partial<Pick<Usuario, "nome" | "email">>;
 export class UsuarioRepository {
 
     private caminho = path.resolve("dados", "usuarios.json");
-    private alunoRepository = new AlunoRepository()
+    private alunoRepository = new AlunoRepository();
 
     constructor() {
         const pasta = path.dirname(this.caminho);
@@ -54,12 +54,13 @@ export class UsuarioRepository {
         );
     }
 
-        async criar(
+    async criar(
         id: string,
         nome: string,
         email: string,
         senhaPlana: string,
-        matricula: string | null = null
+        matricula: string | null = null,
+        papel: PapelUsuario = "aluno" // <--- Novo parâmetro com padrão "aluno"
     ): Promise<Usuario> {
         const usuarios = this.lerArquivo();
 
@@ -70,9 +71,12 @@ export class UsuarioRepository {
             throw new Error("Já existe um usuário com este e-mail.");
         }
 
-        // Se informou matrícula, ela PRECISA existir nos registros de Aluno.
-        // Isso é o que garante que só alunos de verdade viram conta "aluno".
-        if (matricula) {
+        // Validação de segurança: se for cadastrar como ALUNO, a matrícula é OBRIGATÓRIA!
+        if (papel === "aluno") {
+            if (!matricula) {
+                throw new Error("É necessário informar uma matrícula válida para se cadastrar como aluno.");
+            }
+
             const aluno = this.alunoRepository.buscarPorMatricula(matricula.trim());
             if (!aluno) {
                 throw new Error("Matrícula não encontrada. Peça ao bibliotecário para cadastrar você como aluno primeiro.");
@@ -82,7 +86,14 @@ export class UsuarioRepository {
             }
         }
 
-        const usuario = await Usuario.criar(id, nome, email, senhaPlana, matricula ? matricula.trim() : null);
+        const usuario = await Usuario.criar(
+            id, 
+            nome, 
+            email, 
+            senhaPlana, 
+            matricula ? matricula.trim() : null, 
+            papel
+        );
 
         if (!usuario.validar()) {
             throw new Error("Usuário inválido!");
