@@ -1,7 +1,8 @@
-// src/entities/Usuario.ts
 import bcrypt from "bcrypt";
-
+// Tipo papel respectivo a um usuário calculado a partir do campo matrícula, se matrícula: null, papel = bibliotecário;
 export type PapelUsuario = "bibliotecario" | "aluno";
+
+// Entidade Usuário
 
 export class Usuario {
     private _id: string;
@@ -40,9 +41,6 @@ export class Usuario {
 
     public get matricula(): string | null { return this._matricula; }
 
-    // Papel NÃO é armazenado diretamente — é calculado a partir da matrícula.
-    // Se a conta está vinculada a uma matrícula (de um Aluno já cadastrado),
-    // é uma conta de aluno (só visualiza). Sem matrícula, é bibliotecário.
     public get papel(): PapelUsuario {
         return this._matricula ? "aluno" : "bibliotecario";
     }
