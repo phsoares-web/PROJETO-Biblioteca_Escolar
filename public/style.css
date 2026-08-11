@@ -96,39 +96,7 @@ body {
   fill: currentColor;
 }
 
-.header-container {
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 4px;
-}
-
-.logo-img {
-  height: 40px;
-  width: auto;
-  object-fit: contain;
-}
-
-.logo h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #FFF;
-}
-
-.subtitle {
-  color: #D7C4B7;
-  font-size: 0.95rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-} 
-/* --- BARRA DE USUÁRIO LOGADO NO CABEÇALHO --- */
+/* --- Barra de usuário logado no cabeçalho --- */
 .user-session-info {
   display: inline-flex;
   align-items: center;
@@ -154,6 +122,8 @@ body {
   font-weight: 700;
   padding: 4px 12px;
   border-radius: 12px;
+  border: none;
+  cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
@@ -168,7 +138,7 @@ body {
   width: 100%;
   margin: 40px auto;
   padding: 0 20px;
-  flex: 1; 
+  flex: 1;
 }
 
 /* --- Barra de Busca --- */
@@ -216,13 +186,27 @@ body {
 }
 
 /* --- CATÁLOGO DE LIVROS --- */
-/* --- CATÁLOGO DE LIVROS (HOME) --- */
 .catalog-section h2 {
   font-size: 1.4rem;
   color: #5C3A21;
   margin-bottom: 20px;
   padding-bottom: 8px;
   border-bottom: 2px solid #A67B5B;
+}
+
+.catalog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.catalog-header h2 {
+  margin-bottom: 0;
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .books-grid {
@@ -255,6 +239,13 @@ body {
   justify-content: center;
   font-size: 3rem;
   color: #FFF;
+  overflow: hidden;
+}
+
+.book-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .book-info {
@@ -292,6 +283,40 @@ body {
   border: 1px solid #FFCDD2;
 }
 
+/* --- Ações do card de livro (Editar / Excluir) --- */
+.book-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn-action {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-action:hover {
+  opacity: 0.85;
+}
+
+.btn-edit {
+  background-color: #9B5C42;
+  color: #FFFFFF;
+}
+
+.btn-delete {
+  background-color: #A83232;
+  color: #FFFFFF;
+}
+
 /* --- TELA DE LOGIN E CADASTRO --- */
 .flex-center {
   display: flex;
@@ -327,6 +352,8 @@ body {
   transition: all 0.2s ease;
   border-bottom: 3px solid transparent;
   margin-bottom: -2px;
+  text-decoration: none;
+  text-align: center;
 }
 
 .tab-btn.active {
@@ -336,6 +363,18 @@ body {
 
 .hidden {
   display: none !important;
+}
+
+.erro {
+  background-color: #FFEBEE;
+  color: #C62828;
+  border: 1px solid #FFCDD2;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
 .form-group {
@@ -351,7 +390,8 @@ body {
   color: #5C3A21;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   padding: 10px 14px;
   border: 1px solid #A67B5B;
   border-radius: 6px;
@@ -361,7 +401,8 @@ body {
   outline: none;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
   border-color: #9B5C42;
   box-shadow: 0 0 0 2px rgba(155, 92, 66, 0.2);
 }
@@ -378,9 +419,33 @@ body {
   cursor: pointer;
   transition: background-color 0.2s ease;
   margin-top: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
 }
 
 .btn-primary:hover {
+  background-color: #6F4F28;
+}
+
+/* Versão do botão primário para uso ao lado de texto (ex.: cabeçalho
+   do catálogo), sem ocupar a largura toda como .btn-primary faz. */
+.btn-primary-inline {
+  display: inline-block;
+  width: auto;
+  padding: 10px 18px;
+  background-color: #4A2E1B;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary-inline:hover {
   background-color: #6F4F28;
 }
 
@@ -433,6 +498,68 @@ body {
   max-width: 220px;
 }
 
+/* --- FORMULÁRIOS DE CADASTRO (Livro / Empréstimo) --- */
+.form-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2D4C9;
+  border-radius: 12px;
+  padding: 30px;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  box-shadow: 0 8px 16px rgba(111, 79, 40, 0.12);
+}
+
+.form-card h2 {
+  font-size: 1.4rem;
+  color: #5C3A21;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #E2D4C9;
+  text-align: center;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background-color: #4A2E1B;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 10px;
+}
+
+.btn-submit:hover {
+  background-color: #6F4F28;
+}
+
+.btn-back {
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+  color: #5C3A21;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.btn-back:hover {
+  text-decoration: underline;
+}
+
+.preview-capa {
+  display: block;
+  max-width: 100px;
+  max-height: 140px;
+  margin-top: 8px;
+  border-radius: 4px;
+  border: 1px solid #E2D4C9;
+  object-fit: cover;
+}
+
 /* --- Rodapé (Footer) --- */
 .footer {
   background-color: #4A2E1B;
@@ -442,4 +569,101 @@ body {
   border-top: 3px solid #9B5C42;
   font-size: 0.9rem;
   width: 100%;
+}
+
+/* --- Navegação Principal --- */
+
+.main-nav {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(245, 235, 224, 0.2);
+}
+
+.nav-link {
+  color: #D7C4B7;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #FFFFFF;
+}
+/* --- Tabelas (Alunos / Empréstimos) --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(111, 79, 40, 0.08);
+}
+
+thead {
+  background-color: #4A2E1B;
+}
+
+thead th {
+  color: #F5EBE0;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #E2D4C9;
+  font-size: 0.9rem;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background-color: #F7F3E9;
+}
+
+/* --- Botões de ação da tabela de empréstimos --- */
+.btn-devolver,
+.btn-remover {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-right: 4px;
+}
+
+.btn-devolver {
+  background-color: #2E7D32;
+  color: #FFFFFF;
+}
+
+.btn-remover {
+  background-color: #A83232;
+  color: #FFFFFF;
+}
+
+.btn-devolver:hover,
+.btn-remover:hover {
+  opacity: 0.85;
+}
+
+/* Status "em andamento" (empréstimo ativo, ainda no prazo) */
+.status.pending {
+  background-color: #FFF3CD;
+  color: #856404;
+  border: 1px solid #FFEEBA;
 }

@@ -7,14 +7,24 @@ import { randomUUID } from "crypto";
 import { Livro } from "../entities/Livro";
 import { LivroRepository } from "../models/LivroRepository";
 import { upload } from "../middlewares/upload";
+import { UsuarioRepository } from "../models/UsuarioRepository";
 
 const router = Router();
 const livroRepository = new LivroRepository();
+const usuarioRepository = new UsuarioRepository();
 
 router.get("/livros", (req, res) => {
     try {
         const livros = livroRepository.listar();
-        res.render("livros/index", { livros });
+        const usuario = req.session?.usuarioId
+            ? usuarioRepository.buscarPorId(req.session.usuarioId)
+            : null;
+
+        res.render("livros/index", { 
+            titulo: "Catálogo dos Livros",
+            usuario,
+            livros
+        });
     } catch (error) {
         res.status(500).send("Erro ao listar livros.");
     }
@@ -46,7 +56,7 @@ router.post("/livros", upload.single("capa"), (req, res) => {
 
         // capaUrl vem do Multer: req.file só existe se o usuário enviou uma imagem.
         // Um livro novo sempre começa disponível (true).
-        const capaUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        const capaUrl = req.file ? `/public/uploads/${req.file.filename}` : null;
         const livro = new Livro(randomUUID(), titulo, autor, true, capaUrl);
 
         livroRepository.criar(livro);
@@ -103,7 +113,7 @@ router.delete("/livros/:id", (req, res) => {
 
 // Busca livros por título via fetch (usado no campo de busca com debounce).
 router.get("/api/livros/busca", (req, res) => {
-    const termo = String(req.query.titulo ?? "");
+    const termo = String(req.query.busca ?? "");
     const livros = livroRepository.buscarPorTitulo(termo);
     res.status(200).json(livros.map(livro => livro.toJSON()));
 });

@@ -1,12 +1,14 @@
 import fs from "fs";
 import path from "path";
 import { Usuario } from "../entities/Usuario";
+import { AlunoRepository } from "./AlunoRepository";
 
 type UsuarioAtualizavel = Partial<Pick<Usuario, "nome" | "email">>;
 
 export class UsuarioRepository {
 
     private caminho = path.resolve("dados", "usuarios.json");
+    private alunoRepository = new AlunoRepository()
 
     constructor() {
         const pasta = path.dirname(this.caminho);
@@ -29,7 +31,7 @@ export class UsuarioRepository {
         fs.writeFileSync(
             this.caminho,
             JSON.stringify(
-                usuarios.map(usuario => usuario.toJSON()),
+                usuarios.map(usuario => usuario.paraArmazenamento()),
                 null,
                 2
             )
@@ -52,18 +54,35 @@ export class UsuarioRepository {
         );
     }
 
-    async criar(id: string, nome: string, email: string, senhaPlana: string): Promise<Usuario> {
+        async criar(
+        id: string,
+        nome: string,
+        email: string,
+        senhaPlana: string,
+        matricula: string | null = null
+    ): Promise<Usuario> {
         const usuarios = this.lerArquivo();
 
         if (usuarios.some(u => u.id === id)) {
             throw new Error("Já existe um usuário com este ID.");
         }
-
         if (usuarios.some(u => u.email === email.trim().toLowerCase())) {
             throw new Error("Já existe um usuário com este e-mail.");
         }
 
-        const usuario = await Usuario.criar(id, nome, email, senhaPlana);
+        // Se informou matrícula, ela PRECISA existir nos registros de Aluno.
+        // Isso é o que garante que só alunos de verdade viram conta "aluno".
+        if (matricula) {
+            const aluno = this.alunoRepository.buscarPorMatricula(matricula.trim());
+            if (!aluno) {
+                throw new Error("Matrícula não encontrada. Peça ao bibliotecário para cadastrar você como aluno primeiro.");
+            }
+            if (usuarios.some(u => u.matricula === matricula.trim())) {
+                throw new Error("Essa matrícula já possui uma conta vinculada.");
+            }
+        }
+
+        const usuario = await Usuario.criar(id, nome, email, senhaPlana, matricula ? matricula.trim() : null);
 
         if (!usuario.validar()) {
             throw new Error("Usuário inválido!");

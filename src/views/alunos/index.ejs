@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alunos - Biblioteca Escolar</title>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+
+<header class="header">
+       <div class="header-container">
+    <nav class="main-nav">
+      <a href="/livros" class="nav-link">Livros</a>
+        <% if (usuario && usuario.papel === "bibliotecario") { %>
+      <a href="/alunos" class="nav-link">Alunos</a>
+        <a href="/emprestimos" class="nav-link">Empréstimos</a>
+        <% } %>
+    </nav>
+        <div class="logo">
+            <img src="/public/uploads/logo-winrar.png" alt="Logo" class="logo-img">
+            <h1>Biblioteca Escolar</h1>
+        </div>
+        <p class="subtitle">Alunos Cadastrados</p>
+    </div>
+</header>
+
+<main class="container">
+
+    <div class="catalog-header">
+        <h2>Alunos</h2>
+        <% if (usuario && usuario.papel === "bibliotecario") { %>
+            <a href="/alunos/novo" class="btn-primary-inline">+ Cadastrar Aluno</a>
+        <% } else { %>
+    <span class="status pending">Em andamento</span>
+        <% } %>
+    </div>
+
+    <% if (alunos.length === 0) { %>
+        <p>Nenhum aluno cadastrado.</p>
+    <% } %>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Matrícula</th>
+                <% if (usuario && usuario.papel === "bibliotecario") { %>
+                    <th>Ações</th>
+                <% } %>
+            </tr>
+        </thead>
+        <tbody>
+            <% alunos.forEach(aluno => { %>
+                <tr data-id="<%= aluno.id %>">
+                    <td><%= aluno.nome %></td>
+                    <td><%= aluno.matricula %></td>
+                    <% if (usuario && usuario.papel === "bibliotecario") { %>
+                        <td>
+                            <a href="/alunos/<%= aluno.id %>/editar" class="btn-action btn-edit">Editar</a>
+                            <button type="button" class="btn-action btn-delete btn-remover" data-id="<%= aluno.id %>">Excluir</button>
+                        </td>
+                    <% } %>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <br>
+    <a href="/livros" class="btn-back">&larr; Voltar para Livros</a>
+
+</main>
+
+<footer class="footer">
+    <p>&copy; Biblioteca Escolar</p>
+</footer>
+
+<script>
+document.querySelectorAll('.btn-remover').forEach(botao => {
+    botao.addEventListener('click', async () => {
+        if (!confirm('Deseja excluir este aluno?')) return;
+
+        const id = botao.dataset.id;
+        try {
+            const resposta = await fetch(`/alunos/${id}`, { method: 'DELETE' });
+            if (resposta.ok) {
+                botao.closest('tr').remove();
+            } else {
+                alert('Erro ao excluir aluno.');
+            }
+        } catch (erro) {
+            alert('Erro de conexão.');
+        }
+    });
+});
+</script>
+
+</body>
+</html>
