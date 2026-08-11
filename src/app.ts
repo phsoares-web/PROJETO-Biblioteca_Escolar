@@ -1,0 +1,53 @@
+// src/app.ts
+// Configuração central do Express: middlewares, sessão, EJS, arquivos
+// estáticos e as rotas do sistema. 
+// Exporta o app pronto para o server.ts apenas dar o "listen".
+
+import express from "express";
+import session from "express-session";
+import path from "path";
+import methodOverride from "method-override";
+
+import AlunoRoute from "./routes/AlunoRoute";
+import LivroRoute from "./routes/LivroRoute";
+import EmprestimoRoute from "./routes/EmprestimoRoute";
+import AuthRoute from "./routes/AuthRoute";
+
+const app = express();
+
+
+app.use(methodOverride("_method"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(session({
+  secret: "sua-chave-secreta",
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(express.static(path.resolve(__dirname, "..", "public")));
+app.use("/public", express.static(path.resolve(__dirname, "..", "public")));
+
+app.set("view engine", "ejs");
+app.set("views", path.resolve(__dirname, "views"));
+
+app.use(AuthRoute);
+app.use(AlunoRoute);
+app.use(LivroRoute);
+app.use(EmprestimoRoute);
+
+app.get("/", (req, res) => {
+    if (req.session.usuarioId) {
+        res.redirect("/livros");
+    } else {
+        res.render("home");
+    }
+});
+
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error(err);
+    res.status(500).send("Erro interno no servidor.");
+});
+
+export default app;

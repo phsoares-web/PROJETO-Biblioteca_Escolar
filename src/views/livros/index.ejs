@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Biblioteca Aluísio Azevedo</title>
+
+ <link rel="stylesheet" href="/style.css">
+ <link rel="stylesheet" href="/loader.css">
+</head>
+
+<body>
+  <%- include('../partials/loader') %>
+
+ <header class="header">
+  <div class="header-top">
+      <% if (usuario) { %>
+          <form action="/auth/logout" method="POST">
+              <button class="btn-header-login">Sair</button>
+          </form>
+      <% } else { %>
+          <a href="/auth/login" class="btn-header-login">
+            <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+            Entrar / Cadastrar
+          </a>
+      <% } %>
+  </div>
+
+   <div class="header-container">
+    <nav class="main-nav">
+      <a href="/livros" class="nav-link">🕮 Livros</a>
+        <% if (usuario && usuario.papel === "bibliotecario") { %>
+      <a href="/alunos" class="nav-link">✎ Alunos</a>
+        <a href="/emprestimos" class="nav-link">⟳ Empréstimos</a>
+        <% } %>
+    </nav>
+     <div class="logo">
+       <img src="/public/uploads/logo-winrar.png" alt="Logo" class="logo-img">
+       <h1>Biblioteca "Aluísio Azevedo"</h1>
+     </div>
+
+     <p class="subtitle">
+      ⋅˚₊‧ ୨🕮୧ ‧₊˚ ⋅ Acervo e Catálogo Digital ⋅˚₊‧ ୨🕮୧ ‧₊˚ ⋅
+     </p>
+   </div>
+ </header>
+
+ <main class="container">
+
+   <section class="catalog-section">
+
+    <div class="catalog-header">
+      <h2>Livros</h2>
+      <% if (usuario && usuario.papel === "bibliotecario") { %>
+        <a href="/livros/novo" class="btn-primary-inline">+ Cadastrar Livro</a>
+      <% } %>
+    </div>
+
+
+     <% if(livros.length===0){ %>
+
+       <p>Nenhum livro cadastrado.</p>
+
+       <% } %>
+
+         <div class="books-grid">
+
+           <% livros.forEach(livro=> { %>
+
+             <div class="book-card">
+
+               <div class="book-cover">
+
+                 <% if(livro.capaUrl){ %>
+
+                   <img src="<%= livro.capaUrl %>" alt="<%= livro.titulo %>" class="book-cover-img">
+
+                   <% } else { %>
+
+                     <span class="book-cover-placeholder">
+                       📚
+                     </span>
+
+                     <% } %>
+
+               </div>
+
+               <div class="book-info">
+
+                 <h3>
+                   <%= livro.titulo %>
+                 </h3>
+
+                 <p>
+                   <%= livro.autor %>
+                 </p>
+
+                 <span class="status <%= livro.disponivel ? 'available' : 'borrowed' %>">
+
+                   <%= livro.disponivel ? "Disponível" : "Emprestado" %>
+
+                 </span>
+
+                 <% if (usuario && usuario.papel === "bibliotecario") { %>
+                  <div class="book-actions">
+                    <a href="/livros/<%= livro.id %>/editar" class="btn-action btn-edit">
+                        Editar
+                    </a>
+                    <button type="button" class="btn-action btn-delete btn-remover" data-id="<%= livro.id %>">
+                        Excluir
+                    </button>
+                  </div>
+                <% } %>
+
+               </div>
+
+             </div>
+
+             <% }) %>
+
+         </div>
+
+   </section>
+
+ </main>
+
+                <a
+                href="/"
+                class="btn-back"
+                >
+                  ← Voltar para Página Principal
+                </a>
+
+             </div>
+
+ <footer class="footer">
+   <p>
+     &copy; Biblioteca Escolar
+   </p>
+ </footer>
+
+ <script src="/loader.js"></script>
+ <script>
+document.querySelectorAll('.btn-remover').forEach(botao => {
+    botao.addEventListener('click', async () => {
+        if (!confirm('Deseja excluir este livro?')) return;
+
+        const id = botao.dataset.id;
+        try {
+            const resposta = await fetch(`/livros/${id}`, { method: 'DELETE' });
+            if (resposta.ok) {
+                botao.closest('.book-card').remove();
+            } else {
+                alert('Erro ao excluir livro.');
+            }
+        } catch (erro) {
+            alert('Erro de conexão.');
+        }
+    });
+});
+</script>
+
+</body>
+
+</html>

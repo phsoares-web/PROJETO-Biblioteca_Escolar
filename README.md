@@ -1,60 +1,114 @@
 # PROJETO-Biblioteca_Escolar
-Projeto de informático focado em criar uma biblioteca escolar com a função de ajudar os alunos na leitura e no empréstimo de livros Além de garantir o acesso gratuito a literatura
-##Componentes
+# Projeto de informático focado em cria uma biblioteca escolar com a função de ajudar os alunos na leitura e no empréstino de livros Além de garantir o acesso gratuito a literatua  
 
-#João Victor = Back - end(Rotas, Controllers, Models, Auth, Validações)
+##Componentes 
 
-#Emanuel Guerra = Qa/testes(Jest, Documentação, Testes, Bugs, Readme)
+#João Victor = Back - end(Rotas, Controllers, Models, Auth, Validações) 
 
-#Alice Gurgel = Front - end(Views Ejs, Css, js navegador(Fetch, Dom, loading))
+#Emanuel Guerra = Qa/testes(Jest, Documentação, Testes, Bugs, Readme) 
 
-#Paulo Henrique = Líder técnico(Estrutura mvc, Revisão de código, merge)
+#Alice Gurgel = Front - end(Views Ejs, Css, js navegador(Fetch, Dom, loading)) 
+
+#Paulo Henrique = Líder técnico(Estrutura mvc, Revisão de código, merge)  
 
 #Tecnologias Que foram utilizadas
 
-#Node.js
+#Node.js 
 
-#Typescript
+#Typescript 
 
-#Ejs
+#Ejs 
 
-#OOp(Classes)
+#OOp(Classes) 
 
-#Repository pattern
+#Repository pattern 
 
-#Mvc
+#Mvc 
 
-#Json
+#Json 
 
-#Bcrypt + session
+#Bcrypt + session 
 
-#Middleware auth
+#Middleware auth  
 
-#Multer
+#Multer  
 
-#Fetch + Formdata
+#Fetch + Formdata  
 
-#jest
+#jest 
 
-#Git/GitHub
+#Git/GitHub 
 
-#Como executar
+#Como executar  
 
-#Git clone
+#Git clone 
 
-#Npm Install
+#Npm Install 
 
 #Npm Run dev
 
-#Como rodar testes
+#Como rodar testes  
 
-#Npm testes
+#Npm testes 
 
-#Estrutura de pastas
+#Estrutura de pastas 
 
-projeto/
-src/
-entities/ testes/ models/
-testes/ routes/ testes/ middlewares/ views/ app.ts serve.ts public/ ccs/ js/ uploads/ dados/ jest.config.js package.json readme.md
+projeto/  
+src/  
+entities/ 
+_testes_/ 
+models/  
+_testes_/ 
+routes/ 
+_testes_/ 
+middlewares/ 
+views/ 
+app.ts 
+serve.ts 
+public/ 
+ ccs/ 
+ js/ 
+ uploads/ 
+ dados/ 
+ jest.config.js 
+ package.json 
+ readme.md 
 
-Tabela de rotas metedo rota Descrição auth status get /api/produtos Listar todos sim 200 post /api/produtos criar sim 201/400 put /api/produtos/:id atualizar sim 200/404 delete /api/produtos/:id remover admin 200/404 post /auth/registro registra não 201/400 post /auth/login login não 200/401
+ Tabela de rotas 
+metedo    rota           Descrição       auth   status 
+get      /api/produtos   Listar todos     sim     200 
+post    /api/produtos     criar          sim     201/400 
+put    /api/produtos/:id  atualizar      sim     200/404 
+delete /api/produtos/:id  remover        admin   200/404 
+post   /auth/registro     registra       não     201/400 
+post   /auth/login        login          não     200/401  
+
+Diagrama de caso e uso 
+
+Admin 
+
+#Log in 
+
+#Add category  
+
+#Add item
+
+#Manage item 
+
+#Manage order 
+
+#Log out 
+
+User 
+
+#Registrantion 
+
+#View item 
+
+#Make order 
+
+#Make payment 
+
+#Update Profille 
+
+#Log out
