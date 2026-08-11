@@ -7,9 +7,11 @@
  <title>Biblioteca Escolar</title>
 
  <link rel="stylesheet" href="/style.css">
+ <link rel="stylesheet" href="/loader.css">
 </head>
 
 <body>
+  <%- include('../partials/loader') %>
 
  <header class="header">
   <div class="header-top">
@@ -128,6 +130,7 @@
    </p>
  </footer>
 
+ <script src="/loader.js"></script>
  <script>
 document.querySelectorAll('.btn-remover').forEach(botao => {
     botao.addEventListener('click', async () => {

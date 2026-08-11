@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= livro && livro.id ? 'Editar Livro' : 'Cadastrar Livro' %> - Biblioteca Aluísio Azevedo</title>
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/loader.css">
   <style>
     /* Estilos específicos para harmonizar a caixa de formulário com o tema */
     .form-wrapper {
@@ -238,6 +239,7 @@
     <p>&copy; Bernardo, Paulo, Alice, João Victor e Emanuel</p>
   </footer>
 
+  <script src="/loader.js"></script>
   <!-- Script para atualizar o texto do arquivo selecionado -->
   <script>
     function atualizarNomeArquivo(input) {

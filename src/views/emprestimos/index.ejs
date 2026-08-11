@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Empréstimos - Biblioteca Escolar</title>
     <link rel="stylesheet" href="/public/style.css">
+    <link rel="stylesheet" href="/loader.css">
 </head>
 <body>
+    <%- include('../partials/loader') %>
 
 <header class="header">
        <div class="header-container">
@@ -85,6 +87,7 @@
     <p>&copy; Biblioteca Escolar</p>
 </footer>
 
+<script src="/loader.js"></script>
 <script>
 document.querySelectorAll('.btn-devolver').forEach(botao => {
     botao.addEventListener('click', async () => {
