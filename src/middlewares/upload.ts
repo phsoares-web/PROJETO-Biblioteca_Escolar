@@ -8,10 +8,9 @@ import path from "path";
 import fs from "fs";
 import { randomUUID } from "crypto";
 
-// Pasta física onde as imagens ficam salvas. Fica dentro de public/
-// porque o Express serve essa pasta como estática, permitindo acessar
-// os arquivos via URL (ex.: /uploads/nome-do-arquivo.jpg).
-const pastaUploads = path.resolve("public", "uploads");
+// Pasta física onde as capas de livros ficam salvas. Fica dentro de public/uploads/capas
+// para separar essas imagens dos outros assets que podem existir em uploads/.
+const pastaUploads = path.resolve("public", "uploads", "capas");
 
 // Garante que a pasta existe antes de qualquer upload — importante
 // porque uploads/ normalmente fica fora do Git (.gitignore), então
