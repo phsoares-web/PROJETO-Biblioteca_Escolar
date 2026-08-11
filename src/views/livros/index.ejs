@@ -99,18 +99,16 @@
 
                  </span>
 
-                 <div class="book-actions">
-
-                   <a href="/livros/<%= livro.id %>/editar" class="btn-action btn-edit">
-                     Editar
-                   </a>
-                     <button type="submit" class="btn-action btn-delete">
-                       Excluir
-                     </button>
-
-                   </form>
-
-                 </div>
+                 <% if (usuario && usuario.papel === "bibliotecario") { %>
+                  <div class="book-actions">
+                    <a href="/livros/<%= livro.id %>/editar" class="btn-action btn-edit">
+                        Editar
+                    </a>
+                    <button type="button" class="btn-action btn-delete btn-remover" data-id="<%= livro.id %>">
+                        Excluir
+                    </button>
+                  </div>
+                <% } %>
 
                </div>
 

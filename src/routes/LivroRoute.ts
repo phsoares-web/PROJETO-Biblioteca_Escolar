@@ -8,6 +8,8 @@ import { Livro } from "../entities/Livro";
 import { LivroRepository } from "../models/LivroRepository";
 import { upload } from "../middlewares/upload";
 import { UsuarioRepository } from "../models/UsuarioRepository";
+import { autenticar } from "../middlewares/auth";
+import { autorizar } from "../middlewares/autorizar";
 
 const router = Router();
 const livroRepository = new LivroRepository();
@@ -30,11 +32,11 @@ router.get("/livros", (req, res) => {
     }
 });
 
-router.get("/livros/novo", (req, res) => {
+router.get("/livros/novo", autenticar, autorizar("bibliotecario"), (req, res) => {
     res.render("livros/form", { livro: null, erro: null });
 });
 
-router.get("/livros/:id/editar", (req, res) => {
+router.get("/livros/:id/editar", autenticar, autorizar("bibliotecario"), (req, res) => {
     const id = req.params.id;
     if (!id || Array.isArray(id)) {
         res.status(400).send("ID inválido.");
@@ -50,7 +52,7 @@ router.get("/livros/:id/editar", (req, res) => {
     res.render("livros/form", { livro, erro: null });
 });
 
-router.post("/livros", upload.single("capa"), (req, res) => {
+router.post("/livros", autenticar, autorizar("bibliotecario"), upload.single("capa"), (req, res) => {
     try {
         const { titulo, autor } = req.body;
 
@@ -66,7 +68,7 @@ router.post("/livros", upload.single("capa"), (req, res) => {
     }
 });
 
-router.put("/livros/:id", upload.single("capa"), (req, res) => {
+router.put("/livros/:id", autenticar, autorizar("bibliotecario"), upload.single("capa"), (req, res) => {
     const id = req.params.id;
     if (!id || Array.isArray(id)) {
         res.status(400).send("ID inválido.");
@@ -94,7 +96,7 @@ router.put("/livros/:id", upload.single("capa"), (req, res) => {
     }
 });
 
-router.delete("/livros/:id", (req, res) => {
+router.delete("/livros/:id", autenticar, autorizar("bibliotecario"), (req, res) => {
     const id = req.params.id;
     if (!id || Array.isArray(id)) {
         res.status(400).json({ mensagem: "ID inválido." });
