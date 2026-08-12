@@ -4,6 +4,8 @@ import { AlunoRepository } from "../models/AlunoRepository";
 import { autenticar } from "../middlewares/auth";
 import { autorizar } from "../middlewares/autorizar";
 import { UsuarioRepository } from "../models/UsuarioRepository";
+import { Aluno } from "../entities/Aluno";
+import { randomUUID } from "crypto";
 
 const router = Router();
 const alunoRepository = new AlunoRepository();
